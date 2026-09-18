@@ -360,6 +360,19 @@ button.sync-note .why{display:block;margin-top:3px;font-size:10.5px;font-weight:
   display:flex;align-items:center;justify-content:center;font-size:26px;z-index:200;
   pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 6px 20px rgba(0,0,0,.4);
 }
+/* 投喂额度说明：一行小字，不抢操作区 */
+.feed-note{font-size:10.5px;color:#C9C4B8;text-align:center;margin-top:8px;letter-spacing:.4px}
+/* 连击投喂的飘字：从猫身上弹起、放大、渐隐 */
+.combo-fx{
+  position:absolute;z-index:60;font-size:17px;font-weight:900;color:var(--amber);
+  text-shadow:0 2px 10px rgba(0,0,0,.55);pointer-events:none;white-space:nowrap;
+  transform:translate(-50%,-50%);animation:comboUp 1.05s ease-out both;
+}
+@keyframes comboUp{
+  0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}
+  18%{opacity:1;transform:translate(-50%,-70%) scale(1.15)}
+  100%{opacity:0;transform:translate(-50%,-190%) scale(1)}
+}
 .drop-zone{
   position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:170px;height:170px;
   border:2px dashed rgba(201,138,46,0);border-radius:50%;z-index:4;pointer-events:none;transition:.2s;
@@ -865,6 +878,14 @@ var FEEDS = [
   {id:'stick', n:'猫条',   ic:'🍡', cost:15, say:['它几口就吃完了，然后看着你。','它咬住了包装袋不松口。','吃完之后舔了舔嘴。']}
 ];
 
+/* ---- 投喂 / 撸猫 的每日额度与连击 ----
+   规则：投喂每天前 20 次免费，之后每次按食物价格花鱼干；撸猫每天最多 50 次。
+   为什么设额度：不设上限的话，"戳/撸"能无限刷好感度，职级形同虚设。
+   "付费"从来不是真钱 —— 全是站内的鱼干，这里没有真实支付入口。 */
+var FEED_FREE_DAILY = 20;   // 每天免费投喂次数
+var PURR_DAILY = 50;        // 每天撸猫（长按撸背）次数上限
+var COMBO_MS = 1800;        // 两次投喂间隔在这个时间之内就算"连击"
+
 // 表情包预设文案（完整 40 条见 playbook.html）
 var MEME_TEXTS = ['已阅','不批','重画','再练练','我不想上班','你说得对，但我拒绝','别问了',
   '这个色不行','形不准','结构不对','结构呢？','光从哪来','画完了吗','还差多少张',
@@ -927,6 +948,10 @@ function newProfile(){
     nickname: '',
     pokesToday: 0,
     pokesDate: today(),
+    feedToday: 0,        // 今天投喂了几次（前 20 次免费）
+    feedDate: today(),
+    purrToday: 0,        // 今天撸了几次（上限 50）
+    purrDate: today(),
     exportClicks: 0
   };
 }
@@ -986,6 +1011,10 @@ function normalizeProfile(raw){
     nickname: str(raw.nickname, '').slice(0, 8),
     pokesToday: Math.floor(num(raw.pokesToday, 0, 0, 999)),
     pokesDate: DATE_RE.test(raw.pokesDate) ? raw.pokesDate : today(),
+    feedToday: Math.floor(num(raw.feedToday, 0, 0, 9999)),
+    feedDate: DATE_RE.test(raw.feedDate) ? raw.feedDate : today(),
+    purrToday: Math.floor(num(raw.purrToday, 0, 0, 9999)),
+    purrDate: DATE_RE.test(raw.purrDate) ? raw.purrDate : today(),
     exportClicks: Math.floor(num(raw.exportClicks, 0, 0, 99999))
   };
 }
@@ -1067,6 +1096,56 @@ function coinChip(){
 function bumpCoin(){
   var el = $('#coinChip');
   if (el){ el.classList.add('bump'); setTimeout(function(){ el.classList.remove('bump'); }, 460); }
+}
+
+/* ---------------------------------------------------------------
+   音效：全部用 Web Audio 现合成，不依赖任何音频文件。
+   好处：零体积、随时可用、也不会因为"文件没加载完"而时响时不响。
+   AudioContext 必须在用户手势之后才能出声，所以懒创建 + 首次手势时 resume。
+   --------------------------------------------------------------- */
+var AC = null;
+function ac(){
+  if (AC) return AC;
+  try {
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return null;
+    AC = new C();
+    if (AC.state === 'suspended') AC.resume();
+  } catch (e){ AC = null; }
+  return AC;
+}
+// 一旦有任何手势，立刻把 AudioContext 叫醒（iOS/安卓浏览器都要求手势后才许出声）
+document.addEventListener('pointerdown', function(){ ac(); }, { once: false, passive: true });
+
+function beep(freq, dur, type, vol, slideTo){
+  var a = ac(); if (!a) return;
+  var t = a.currentTime;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = type || 'sine';
+  o.frequency.setValueAtTime(freq, t);
+  if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(a.destination);
+  o.start(t); o.stop(t + dur + 0.03);
+}
+// 有名字的音效入口。每个动作一个音色，短促、不烦人。
+function sfx(name){
+  if (document.hidden) return;             // 页面在后台就别响
+  try {
+    switch(name){
+      case 'poke':   beep(540, 0.07, 'sine', 0.16, 300); break;                         // 戳：短促"啵"
+      case 'purr':   beep(85, 0.65, 'sawtooth', 0.10, 128); beep(92, 0.65, 'sawtooth', 0.09, 136); break; // 撸：低频咕噜
+      case 'feed':   beep(660, 0.08, 'square', 0.12); beep(880, 0.12, 'square', 0.10, undefined); break;   // 吃：咔嚓两口
+      case 'pay':    beep(1318, 0.09, 'triangle', 0.15); beep(1760, 0.13, 'triangle', 0.11, undefined); break; // 扣鱼干：金币
+      case 'deny':   beep(190, 0.18, 'square', 0.10, 120); break;                        // 超限/失败：低沉的"嗡"
+      case 'draw':   beep(420, 0.34, 'sawtooth', 0.09, 1200); break;                     // 抽卡：上扬
+      case 'check':  beep(784, 0.11, 'sine', 0.16); beep(1047, 0.18, 'sine', 0.14, undefined); break; // 签到
+      case 'pop':    beep(700, 0.06, 'sine', 0.11, 520); break;                          // 发帖/评论/点赞/投票
+      case 'up':     [523, 659, 784, 1047].forEach(function(f, i){ setTimeout(function(){ beep(f, 0.16, 'triangle', 0.14); }, i * 85); }); break; // 升级琶音
+    }
+  } catch (e){}
 }
 
 /* ---------------------------------------------------------------
@@ -1710,6 +1789,7 @@ function doVote(i){
   save();
   paintTopic();
   addCoin(8, '投票 +8 鱼干');
+  sfx('pop');
   if (!SHARED) return;
   rpc('jzca_vote', { p_code: SHARE.code, p_uid: UID, p_day: today(), p_opt: i })
     .then(function(ok){
@@ -1791,6 +1871,7 @@ function doCheckin(){
   vibe(18);
   render();
   toast('签到成功 +10 鱼干 · 连续 ' + P.streak + ' 天' + extra);
+  sfx('check');
 }
 
 /* ---------------------------------------------------------------
@@ -1831,6 +1912,7 @@ function doLike(k, pid, deptId){
     S.liked.push(k);
     // 附议奖励只发一次：取消后再点不再发钱，否则来回切换就能无限刷鱼干
     if (S.likePaid.indexOf(k) < 0){ S.likePaid.push(k); addCoin(1); }
+    sfx('pop');
   }
   save();
   // 预置演示帖没有服务端记录，本机记账就够了
@@ -1931,6 +2013,7 @@ function sendComment(){
       if (btn){ btn.disabled = false; btn.textContent = '发送'; }
       paintComments();
       setCommentCount(cmtState.pid, (remote.comments[cmtState.pid] || []).length);
+      sfx('pop');
       toast('说完了');
     })
     .catch(function(e){
@@ -1981,7 +2064,7 @@ function sendPost(deptId){
     p_dept: deptId, p_title: title, p_body: body
   })
     .then(function(){ closeSheet(); return pullPosts(deptId); })
-    .then(function(){ render(); toast('发出去了'); })
+    .then(function(){ render(); sfx('pop'); toast('发出去了'); })
     .catch(function(e){
       if (btn){ btn.disabled = false; btn.textContent = '发布'; }
       remote.err = String(e.message || e);
@@ -2100,6 +2183,7 @@ function viewCat(){
     h += '<button class="feed-btn" data-feed="' + f.id + '"><span class="fi">' + f.ic + '</span><span class="fn">' + f.n + '</span><span class="fc">−' + f.cost + ' 鱼干</span></button>';
   });
   h +=   '</div>';
+  h +=   '<div class="feed-note" id="feedNote"></div>';
   h += '</div>';
   h += '</div>';
   return h;
@@ -2113,6 +2197,16 @@ function mountCat(){
   if (!stage) return;
 
   setTimeout(function(){ if (affBar) affBar.style.width = Math.round(S.affection / AFF_MAX * 100) + '%'; }, 60);
+
+  // 投喂额度说明：免费剩余次数，用完就提示要花鱼干
+  function paintFeedNote(){
+    var el = $('#feedNote'); if (!el) return;
+    var left = FEED_FREE_DAILY - P.feedToday;
+    el.textContent = left > 0
+      ? ('今日免费投喂剩 ' + left + ' 次，之后每次花鱼干')
+      : '今日免费次数已用完，投喂需花鱼干';
+  }
+  paintFeedNote();
 
   // 由首页"投喂"快捷入口进来：脉冲提示投喂区，并把操作说清楚
   if (wantFeed){
@@ -2158,6 +2252,7 @@ function mountCat(){
     if (up){
       var hud = $('.cat-hud .lv');
       if (hud) hud.textContent = '好感度 Lv.' + P.level + ' · ' + levelName(P.level);
+      sfx('up');
       toast('职级提升：' + levelName(P.level));
     }
   }
@@ -2181,6 +2276,7 @@ function mountCat(){
     swapPhoto(r[1]);
     say(r[0]);
     fx(pick(['✨','💢','🐾','💤','❓']), x - 13, y - 20);
+    sfx('poke');
     vibe(14);
 
     // 每天戳的前 20 次给好感度，避免无限刷
@@ -2233,13 +2329,24 @@ function mountCat(){
   });
 
   function purr(){
-    if (Date.now() - S.pettedAt < 4000){ toast('它刚被撸过，让它歇一会'); return; }
+    if (Date.now() - S.pettedAt < 4000){ sfx('deny'); toast('它刚被撸过，让它歇一会'); return; }
+    // 每天撸猫上限：不加限制的话，长按撸背能无限刷好感度，职级形同虚设
+    var td = today();
+    if (P.purrDate !== td){ P.purrDate = td; P.purrToday = 0; }
+    if (P.purrToday >= PURR_DAILY){
+      sfx('deny');
+      toast('它今天被撸够了（每天 ' + PURR_DAILY + ' 次），明天再来');
+      if (lineEl) lineEl.textContent = '它今天被撸够了，不太想理你';
+      return;
+    }
+    P.purrToday++;
     S.pettedAt = Date.now();
     bumped(3);
     vibe([18, 40, 18]);
+    sfx('purr');
     fx('🎵', stage.clientWidth/2 - 13, stage.clientHeight * 0.44);
     say('咕噜咕噜……');
-    if (lineEl) lineEl.textContent = '它发出了咕噜声 · 好感度 +3';
+    if (lineEl) lineEl.textContent = '它发出了咕噜声 · 好感度 +3（今日还剩 ' + (PURR_DAILY - P.purrToday) + ' 次）';
     swapPhoto(pick(['t12','t13','t05']));
   }
 
@@ -2289,19 +2396,57 @@ function mountCat(){
     drag = null;
 
     if (dist < 118){
-      if (!spendCoin(f.cost)) return;
-      S.feedings.push({t: Date.now(), item: f.n});
+      // 每天前 20 次免费；之后按食物价格花鱼干（站内货币，不是真钱）
+      var td = today();
+      if (P.feedDate !== td){ P.feedDate = td; P.feedToday = 0; }
+      var isFree = P.feedToday < FEED_FREE_DAILY;
+      if (!isFree){
+        if (!spendCoin(f.cost)){
+          sfx('deny');
+          if (lineEl) lineEl.textContent = '今天免费次数用完了，投一次要 ' + f.cost + ' 鱼干，你的不够';
+          return;
+        }
+        sfx('pay');
+      }
+      P.feedToday++;
+      S.feedings.push({ t: Date.now(), item: f.n, free: isFree });
       bumped(2);
       save();
       vibe([12,30,12]);
+      sfx('feed');
       fx(f.ic, cx - r.left - 13, cy - r.top - 10);
       var s = pick(f.say);
       say(s);
-      if (lineEl) lineEl.textContent = f.n + ' 投喂成功 · −' + f.cost + ' 鱼干';
+      comboFeed(cx - r.left, cy - r.top - 30);
+      paintFeedNote();
+      if (lineEl) lineEl.textContent = f.n + ' 投喂成功' + (isFree ? '（今日免费，剩 ' + (FEED_FREE_DAILY - P.feedToday) + ' 次）' : ' · −' + f.cost + ' 鱼干');
       swapPhoto(pick(['t16','t13','t12','t07']));
     } else {
+      sfx('deny');
       toast('它没接住，东西掉地上了');
-      if (lineEl) lineEl.textContent = '投喂失败 · 鱼干未扣除';
+      if (lineEl) lineEl.textContent = '投喂失败 · 未扣除';
+    }
+  }
+
+  /* --- 连击投喂：短时间连续投喂会累加连击数，触发更强的反馈（抖音礼物那套的手感，但去掉付费） --- */
+  var combo = 0, comboTimer = null, lastFeedAt = 0;
+  function comboFeed(x, y){
+    var now = Date.now();
+    combo = (now - lastFeedAt < COMBO_MS) ? combo + 1 : 1;
+    lastFeedAt = now;
+    clearTimeout(comboTimer);
+    comboTimer = setTimeout(function(){ combo = 0; }, COMBO_MS);
+    if (combo < 2) return;
+    var c = document.createElement('div');
+    c.className = 'combo-fx';
+    c.textContent = '连击 ×' + combo;
+    c.style.left = x + 'px';
+    c.style.top = y + 'px';
+    stage.appendChild(c);
+    setTimeout(function(){ c.remove(); }, 1100);
+    if (combo === 5 || combo === 10 || combo === 20){
+      sfx('up');
+      say(pick(['它吃得眼睛都直了','它有点撑，但还在吃','别喂了，它要胖成球了','它居然开始主动蹭你','它把盘子都舔干净了']));
     }
   }
 }
@@ -2609,6 +2754,7 @@ function drawCard(){
   S.draws++;
   save();
   vibe([10, 26, 10]);
+  sfx('draw');
   paintDrawResult([r], DRAW_COST, refund);
   paintAlbum();
 }
@@ -2632,6 +2778,7 @@ function drawBatch(){
   S.draws += list.length;
   save();
   vibe([10, 26, 10]);
+  sfx('draw');
   paintDrawResult(list, cost, refund);
   paintAlbum();
 }
@@ -3023,8 +3170,10 @@ sheetEl.addEventListener('click', function(e){
 /* ---------------------------------------------------------------
    13. 启动
    --------------------------------------------------------------- */
-// 跨天清理：戳猫的每日次数上限按天重置
+// 跨天清理：戳猫/投喂/撸猫的每日次数上限按天重置
 if (P.pokesDate !== today()){ P.pokesDate = today(); P.pokesToday = 0; }
+if (P.feedDate !== today()){ P.feedDate = today(); P.feedToday = 0; }
+if (P.purrDate !== today()){ P.purrDate = today(); P.purrToday = 0; }
 // fresh 是"新抽到、还没看过"的标记，正常由"打开图鉴"清空，这里只是兜底上限
 if (S.album.fresh.length > 3) S.album.fresh = S.album.fresh.slice(-3);
 // 职级完全由好感度推导，启动时对齐一次；否则导入的存档会出现
