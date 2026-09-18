@@ -1,0 +1,3049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#5A6152">
+<meta name="format-detection" content="telephone=no">
+<!-- 内联的猫爪图标。除了好看，它还有个实际作用：没有 icon 时浏览器会去请求
+     /favicon.ico，在局域网服务上就是一个 404，平白多一条报错 -->
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTUnIGZpbGw9JyM1QTYxNTInLz48ZyBmaWxsPScjRjRGMUVBJz48ZWxsaXBzZSBjeD0nMzInIGN5PSc0MS41JyByeD0nMTQnIHJ5PScxMS41Jy8+PGNpcmNsZSBjeD0nMTUuOCcgY3k9JzI3JyByPSc2Jy8+PGNpcmNsZSBjeD0nMjYnIGN5PScxOC40JyByPSc2LjQnLz48Y2lyY2xlIGN4PSczOCcgY3k9JzE4LjQnIHI9JzYuNCcvPjxjaXJjbGUgY3g9JzQ4LjInIGN5PScyNycgcj0nNicvPjwvZz48L3N2Zz4=">
+<title>姜校长办公室</title>
+<style>
+:root{
+  --paper:#F7F5F0; --card:#FFFFFF; --line:#E6E2D9; --line2:#F0EDE6;
+  --ink:#22201D; --ink2:#6B675F; --ink3:#9C978C;
+  --moss:#5A6152; --moss-l:#EAEDE5; --moss-d:#3E4438;
+  --amber:#C98A2E; --amber-l:#FBF1DE;
+  --seal:#B5452F; --seal-l:#FBEBE7;
+  --silver:#A8A29E; --silver-l:#F1EFEC;
+  --dark:#141414;
+  --safe:env(safe-area-inset-bottom,0px);
+  --tabh:60px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:#E8E5DE;color:var(--ink);
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  font-size:15px;line-height:1.7;letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased;overscroll-behavior-y:none;
+}
+img{display:block;max-width:100%;-webkit-user-drag:none;user-select:none}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.hidden{display:none !important}
+
+/* ================= 外壳 ================= */
+#app{
+  max-width:430px;margin:0 auto;min-height:100vh;background:var(--paper);
+  position:relative;overflow-x:hidden;box-shadow:0 0 44px rgba(34,32,29,.10);
+}
+
+/* ================= 启动页 ================= */
+.onboard{
+  position:fixed;top:0;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;
+  background:var(--dark);z-index:100;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  transition:opacity .55s ease,transform .55s ease;
+}
+.onboard.out{opacity:0;transform:translateY(-12px);pointer-events:none}
+.ob-bg{position:absolute;inset:0}
+.ob-bg img{width:100%;height:100%;object-fit:cover;opacity:.52;animation:obZoom 5s ease-out both}
+@keyframes obZoom{from{transform:scale(1.07)}to{transform:scale(1)}}
+.ob-veil{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(14,14,14,.88) 0%,rgba(14,14,14,.16) 34%,rgba(14,14,14,.55) 62%,rgba(14,14,14,.97) 100%);
+}
+.ob-paw{
+  position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.4);
+  width:112px;height:112px;border-radius:50%;background:rgba(181,69,47,.9);
+  display:flex;align-items:center;justify-content:center;font-size:46px;
+  opacity:0;box-shadow:0 0 0 12px rgba(181,69,47,.14);
+}
+.ob-paw.stamp{animation:stamp .62s cubic-bezier(.2,1.5,.5,1) forwards}
+@keyframes stamp{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(2.6) rotate(-24deg)}
+  55%{opacity:1;transform:translate(-50%,-50%) scale(.86) rotate(-9deg)}
+  75%{transform:translate(-50%,-50%) scale(1.06) rotate(-13deg)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-12deg)}
+}
+.ob-body{position:relative;z-index:3;padding:0 30px 42px;color:#F4F1EA}
+.ob-brand{font-size:10.5px;letter-spacing:4px;color:var(--amber);font-weight:800;margin-bottom:16px}
+.ob-title{font-size:36px;font-weight:800;letter-spacing:3px;line-height:1.22}
+.ob-status{font-size:12.5px;color:#B5B0A6;margin-top:15px;letter-spacing:.5px;min-height:19px}
+.ob-bar{height:3px;background:rgba(255,255,255,.15);border-radius:2px;margin-top:12px;overflow:hidden}
+.ob-bar i{display:block;height:100%;width:0;background:var(--amber);border-radius:2px;transition:width .3s ease}
+.ob-card{
+  display:flex;align-items:center;gap:9px;margin-top:22px;opacity:0;transform:translateY(8px);
+  transition:.42s ease;
+}
+.ob-card.on{opacity:1;transform:none}
+.ob-card .paw{
+  width:34px;height:34px;border-radius:50%;background:var(--seal);color:#fff;flex:0 0 34px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.ob-card .tx{font-size:11.5px;color:#8F8A80;letter-spacing:.4px}
+.ob-enter{
+  margin-top:26px;width:100%;background:var(--moss);color:#fff;font-size:15px;font-weight:800;
+  letter-spacing:3px;padding:15px 0;border-radius:13px;opacity:0;transform:translateY(8px);
+  transition:.42s ease;
+}
+.ob-enter.on{opacity:1;transform:none}
+.ob-enter:active{transform:scale(.975)}
+
+/* ================= 顶栏 ================= */
+.topbar{
+  position:sticky;top:0;z-index:30;height:54px;display:flex;align-items:center;
+  padding:0 16px;gap:10px;
+  background:rgba(247,245,240,.93);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.topbar .tb-l{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+.topbar .tb-t{flex:1;text-align:center;font-size:16px;font-weight:800;letter-spacing:1.2px}
+.topbar .tb-r{flex:0 0 auto;display:flex;align-items:center;gap:8px}
+.tb-back{
+  width:32px;height:32px;border-radius:10px;background:var(--silver-l);
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.coin-chip{
+  display:flex;align-items:center;gap:4px;font-size:11.5px;font-weight:800;
+  background:var(--amber-l);color:#8A5D16;padding:4px 10px;border-radius:20px;
+}
+.coin-chip.bump{animation:coinBump .45s ease}
+@keyframes coinBump{0%{transform:scale(1)}45%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+/* ================= 页面容器 ================= */
+.pages{padding-bottom:calc(var(--tabh) + var(--safe) + 8px)}
+
+/* ================= Tab 栏 ================= */
+.tabbar{
+  position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;z-index:40;
+  height:calc(var(--tabh) + var(--safe));padding-bottom:var(--safe);
+  display:flex;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);
+}
+.tabbar button{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1px;font-size:9.5px;font-weight:700;color:var(--ink3);letter-spacing:.5px;
+  transition:color .16s;
+}
+.tabbar button i{font-size:19px;font-style:normal;filter:grayscale(1);opacity:.42;transition:.16s;line-height:1}
+.tabbar button.on{color:var(--ink)}
+.tabbar button.on i{filter:none;opacity:1;transform:translateY(-1px)}
+.tabbar button:active i{transform:scale(.9)}
+
+/* ================= 通用组件 ================= */
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px;min-width:0}
+.card+.card{margin-top:11px}
+.sec-t{
+  font-size:11px;font-weight:800;letter-spacing:2px;color:var(--ink3);
+  margin:20px 0 10px;display:flex;align-items:center;justify-content:space-between;
+}
+.sec-t:first-child{margin-top:4px}
+.sec-t .more{font-size:11.5px;color:var(--moss);font-weight:700;letter-spacing:0}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  padding:13px 0;border-radius:12px;font-size:14px;font-weight:800;letter-spacing:1px;
+  background:var(--moss);color:#fff;transition:transform .12s,opacity .16s;
+}
+.btn:active{transform:scale(.977)}
+.btn.ghost{background:var(--silver-l);color:var(--ink2)}
+.btn.amber{background:var(--amber);color:#1F1B12}
+.btn:disabled{opacity:.42;pointer-events:none}
+.btn.sm{padding:9px 16px;font-size:12.5px;width:auto;letter-spacing:.5px}
+.pill{
+  display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.5px;
+  padding:3px 9px;border-radius:20px;background:var(--silver-l);color:var(--ink2);
+}
+.pill.moss{background:var(--moss-l);color:var(--moss-d)}
+.pill.amber{background:var(--amber-l);color:#8A5D16}
+.pill.seal{background:var(--seal-l);color:#8E3623}
+.pill.demo{background:#EFEDE7;color:#9C978C;border:1px dashed #D6D1C6}
+/* 共享层连不上时的提示条。用最低调的方式说最重要的事：不挡住操作，但看得见。
+   它本身是个按钮 —— 点一下就地重试，不用让用户去刷新整页 */
+button.sync-note{
+  display:block;width:100%;text-align:left;margin:11px 0 0;padding:11px 13px;
+  border-radius:10px;font-size:12px;line-height:1.6;font-family:inherit;
+  background:#FBF3E6;border:1px solid #EAD9BC;color:#8A6A2A;font-weight:700;
+}
+button.sync-note:active{transform:scale(.985)}
+/* 失败原因用更小更淡的字挂在下面：它是给能读懂的人看的，不该抢主句的注意力 */
+button.sync-note .why{display:block;margin-top:3px;font-size:10.5px;font-weight:600;opacity:.78;word-break:break-all}
+/* 部门页的发帖入口。固定在内容之上而不是塞进某张卡里，避免和「申请调岗」抢视线 */
+.post-new{margin-bottom:13px}
+.post-empty{padding:22px 16px;text-align:center}
+.hr{height:1px;background:var(--line2);margin:13px 0}
+.muted{color:var(--ink2);font-size:13px}
+.tiny{color:var(--ink3);font-size:11.5px;line-height:1.65}
+
+/* ================= 首页 · 实时状态 ================= */
+.status-card{border-radius:17px;overflow:hidden;background:var(--card);border:1px solid var(--line)}
+.status-photo{position:relative;height:230px;background:#EDEAE3;overflow:hidden}
+.status-photo img{width:100%;height:100%;object-fit:cover}
+.status-photo .live{
+  position:absolute;left:11px;top:11px;font-size:10px;font-weight:800;color:#fff;
+  background:rgba(14,14,14,.7);padding:4px 10px;border-radius:20px;
+  backdrop-filter:blur(6px);display:flex;align-items:center;gap:5px;letter-spacing:.5px;
+}
+.status-photo .live::before{
+  content:"";width:6px;height:6px;border-radius:50%;background:#7BD86A;
+  box-shadow:0 0 0 3px rgba(123,216,106,.24);animation:blink 1.8s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.status-photo .rr{
+  position:absolute;right:11px;top:11px;font-size:9.5px;font-weight:800;
+  background:rgba(201,138,46,.92);color:#231A0A;padding:4px 9px;border-radius:6px;
+}
+.status-body{padding:14px 16px 16px}
+.status-body .st-title{font-size:16.5px;font-weight:800;letter-spacing:.5px;line-height:1.45}
+.status-body .st-loc{font-size:11px;color:var(--ink3);margin-top:5px}
+.status-body .st-tags{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap}
+
+/* ================= 议题 ================= */
+.topic{background:var(--amber-l);border:1px solid #EBD9B4;border-radius:15px;padding:15px 16px}
+.topic .tp-k{font-size:10px;font-weight:800;color:#8A5D16;letter-spacing:1.6px}
+.topic .tp-q{font-size:15px;font-weight:800;margin-top:6px;line-height:1.5}
+.topic .tp-opts{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.opt{
+  position:relative;background:#fff;border:1px solid #EBD9B4;border-radius:10px;
+  padding:10px 13px;font-size:13.5px;font-weight:600;overflow:hidden;text-align:left;
+  transition:transform .12s;
+}
+.opt:active{transform:scale(.985)}
+.opt .fill{
+  position:absolute;left:0;top:0;bottom:0;width:0;background:var(--amber-l);
+  transition:width .55s cubic-bezier(.3,1,.4,1);z-index:0;
+}
+.opt .lbl{position:relative;z-index:1;display:flex;justify-content:space-between;gap:10px}
+.opt .pct{font-weight:800;color:#8A5D16;font-variant-numeric:tabular-nums}
+.opt.picked{border-color:var(--amber);border-width:1.5px}
+.opt.picked .lbl::after{content:" ✓";color:var(--amber);font-weight:800}
+
+/* ================= 快捷四宫格 ================= */
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.quick button{
+  background:var(--card);border:1px solid var(--line);border-radius:13px;
+  padding:13px 0 10px;display:flex;flex-direction:column;align-items:center;gap:4px;
+  transition:transform .12s;
+}
+.quick button:active{transform:scale(.955)}
+.quick button i{font-size:20px;font-style:normal;line-height:1}
+.quick button span{font-size:10px;font-weight:700;color:var(--ink2);letter-spacing:.3px}
+
+/* ================= 帖子 ================= */
+.post{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px}
+.post+.post{margin-top:10px}
+.post-h{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.post-av{
+  width:28px;height:28px;border-radius:50%;background:var(--moss-l);flex:0 0 28px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+}
+.post-h .who{font-size:12.5px;font-weight:700}
+.post-h .when{font-size:10.5px;color:var(--ink3)}
+.post-t{font-size:14.5px;font-weight:800;margin-bottom:5px;line-height:1.5}
+.post-c{font-size:13.5px;color:var(--ink2);line-height:1.72;white-space:pre-wrap}
+.post-f{display:flex;align-items:center;gap:14px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line2)}
+.post-f button{
+  display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink3);font-weight:700;
+}
+.post-f button.on{color:var(--seal)}
+.post-f button:active{transform:scale(.94)}
+/* 评论条目。左侧竖线是"这是别人的话"的视觉锚点，比缩进更省横向空间 */
+.cmt{padding:11px 0;border-bottom:1px solid var(--line2)}
+.cmt:last-child{border-bottom:none}
+.cmt-h{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.cmt-h b{font-size:12.5px;font-weight:800}
+.cmt-h span{font-size:10.5px;color:var(--ink3)}
+.cmt-b{font-size:13.5px;color:var(--ink2);line-height:1.7;white-space:pre-wrap;padding-left:10px;border-left:2px solid var(--moss-l)}
+#cmtList{max-height:44vh;overflow-y:auto}
+/* 排行榜。名次用等宽数字，避免出现 10 的时候整列宽度跳动 */
+.rank{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line2)}
+.rank:last-child{border-bottom:none}
+.rank .no{width:22px;flex:0 0 22px;font-size:12px;font-weight:800;color:var(--ink3);text-align:center;font-variant-numeric:tabular-nums}
+.rank .no.top{color:var(--moss)}
+.rank .nm{flex:1;min-width:0;font-size:13.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank .nm.me{color:var(--moss)}
+.rank .sub{font-size:10.5px;color:var(--ink3);font-weight:600}
+.rank .sc{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ================= 部门 ================= */
+.depts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dept{
+  position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px;overflow:hidden;text-align:left;transition:transform .12s;
+}
+.dept:active{transform:scale(.975)}
+.dept .bar{position:absolute;left:0;top:0;bottom:0;width:3.5px}
+.dept .ic{font-size:20px;line-height:1}
+.dept .nm{font-size:13.5px;font-weight:800;margin-top:7px;letter-spacing:.3px}
+.dept .rl{font-size:10px;color:var(--ink3);margin-top:2px;font-weight:600}
+.dept .ft{font-size:10.5px;font-weight:700;margin-top:9px}
+.dept .ok{
+  position:absolute;right:9px;top:9px;width:16px;height:16px;border-radius:50%;
+  background:var(--moss);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;
+}
+.dept.locked{opacity:.62}
+.dept.locked .ft{color:var(--ink3) !important}
+
+/* ================= 撸猫页 ================= */
+.cat-wrap{
+  position:relative;margin:-14px -14px 0;background:var(--dark);
+  height:calc(100vh - var(--tabh) - var(--safe) - 54px);overflow:hidden;
+}
+.cat-stage{position:absolute;inset:0;touch-action:none}
+.cat-stage img{width:100%;height:100%;object-fit:cover;transition:opacity .28s ease,transform .28s ease}
+.cat-stage img.swap{opacity:.25;transform:scale(1.02)}
+.cat-veil{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(14,14,14,.72) 0%,rgba(14,14,14,0) 26%,rgba(14,14,14,0) 52%,rgba(14,14,14,.92) 100%);
+}
+.cat-hud{position:absolute;top:0;left:0;right:0;padding:14px 18px;color:#fff;pointer-events:none;z-index:5}
+.cat-hud .lv{display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--amber)}
+.aff-bar{width:148px;height:4px;background:rgba(255,255,255,.2);border-radius:3px;margin:8px auto 0;overflow:hidden}
+.aff-bar i{display:block;height:100%;width:0;background:var(--amber);border-radius:3px;transition:width .5s cubic-bezier(.3,1,.4,1)}
+.hold-ring{
+  position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:96px;height:96px;
+  pointer-events:none;opacity:0;transition:opacity .18s;z-index:6;
+}
+.hold-ring.on{opacity:1}
+.hold-ring svg{transform:rotate(-90deg)}
+.hold-ring .bgc{stroke:rgba(255,255,255,.2)}
+.hold-ring .fgc{stroke:var(--amber);transition:stroke-dashoffset .08s linear}
+.cat-hint{
+  position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);text-align:center;
+  color:rgba(255,255,255,.86);pointer-events:none;z-index:4;transition:opacity .3s;
+}
+.cat-hint .ring{
+  width:60px;height:60px;border-radius:50%;border:2px dashed rgba(255,255,255,.55);
+  display:flex;align-items:center;justify-content:center;font-size:21px;margin:0 auto;
+  animation:pulseR 2.1s ease-in-out infinite;
+}
+@keyframes pulseR{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.1);opacity:1}}
+.cat-hint .tx{font-size:11px;margin-top:10px;font-weight:600;letter-spacing:.5px}
+.cat-hint.gone{opacity:0}
+.cat-say{
+  position:absolute;left:0;right:0;bottom:132px;text-align:center;z-index:7;pointer-events:none;
+  padding:0 30px;
+}
+.cat-say span{
+  display:inline-block;background:rgba(14,14,14,.78);color:#F4F1EA;font-size:12.5px;
+  padding:8px 15px;border-radius:20px;backdrop-filter:blur(8px);line-height:1.5;
+  animation:sayIn .3s ease both;
+}
+@keyframes sayIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.emoji-fx{
+  position:absolute;font-size:26px;pointer-events:none;z-index:8;
+  animation:fxUp 1s ease-out forwards;
+}
+@keyframes fxUp{
+  0%{opacity:0;transform:translateY(0) scale(.6)}
+  22%{opacity:1;transform:translateY(-16px) scale(1.15)}
+  100%{opacity:0;transform:translateY(-72px) scale(.9)}
+}
+.cat-dock{
+  position:absolute;left:0;right:0;bottom:0;padding:0 16px 18px;z-index:9;
+}
+.cat-dock .sayline{font-size:11.5px;color:#B5B0A6;margin-bottom:10px;text-align:center;min-height:17px}
+.feed-row{display:flex;gap:9px}
+.feed-btn{
+  flex:1;position:relative;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:13px;padding:11px 0;display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:#F4F1EA;backdrop-filter:blur(8px);transition:transform .12s;touch-action:none;
+}
+.feed-btn:active{transform:scale(.96)}
+.feed-btn .fi{font-size:19px;line-height:1}
+.feed-btn .fn{font-size:11.5px;font-weight:800}
+.feed-btn .fc{font-size:9.5px;color:#B5B0A6}
+.feed-btn.dragging{opacity:.35}
+.ghost-feed{
+  position:fixed;width:56px;height:56px;border-radius:50%;background:rgba(201,138,46,.94);
+  display:flex;align-items:center;justify-content:center;font-size:26px;z-index:200;
+  pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 6px 20px rgba(0,0,0,.4);
+}
+.drop-zone{
+  position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:170px;height:170px;
+  border:2px dashed rgba(201,138,46,0);border-radius:50%;z-index:4;pointer-events:none;transition:.2s;
+}
+.drop-zone.near{border-color:rgba(201,138,46,.75);background:rgba(201,138,46,.1)}
+
+/* ================= 剪辑室 ================= */
+.seg{display:flex;background:var(--silver-l);border-radius:12px;padding:3px;margin-bottom:15px}
+.seg button{
+  flex:1;padding:9px 0;border-radius:10px;font-size:13px;font-weight:700;color:var(--ink2);
+  transition:.16s;
+}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(34,32,29,.09)}
+
+.meme-stage{
+  border-radius:15px;overflow:hidden;background:#111;position:relative;
+  aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;
+}
+.meme-stage canvas{width:100%;height:100%;object-fit:contain;display:block}
+.meme-txt{
+  position:absolute;left:0;right:0;text-align:center;padding:0 14px;
+  font-size:21px;font-weight:900;color:#fff;letter-spacing:1px;line-height:1.3;
+  text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 3px 6px rgba(0,0,0,.5);
+  word-break:break-word;
+}
+.meme-txt.top{top:14px}
+.meme-txt.bottom{bottom:14px}
+.picker{display:flex;gap:7px;overflow-x:auto;padding:3px 0 8px;scrollbar-width:none}
+.picker::-webkit-scrollbar{display:none}
+.picker button{
+  flex:0 0 auto;width:56px;height:74px;border-radius:9px;overflow:hidden;
+  border:2px solid transparent;background:#EDEAE3;padding:0;transition:.14s;
+}
+.picker button img{width:100%;height:100%;object-fit:cover}
+.picker button.on{border-color:var(--moss);transform:translateY(-2px)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:20px;
+  background:var(--card);border:1px solid var(--line);transition:.14s;
+}
+.chip.on{background:var(--moss);color:#fff;border-color:var(--moss)}
+.chip:active{transform:scale(.95)}
+input.txt,textarea.txt{
+  width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:11px;
+  font-size:14px;font-family:inherit;background:var(--card);color:var(--ink);outline:none;
+}
+input.txt{height:auto}
+/* textarea 必须显式设 line-height 与 resize 方向，否则 iOS 上 Safari 会
+   按默认 1.2 行高挤成一团，且右下角出现一个和圆角打架的斜纹手柄 */
+textarea.txt{resize:vertical;line-height:1.65;min-height:92px}
+input.txt:focus,textarea.txt:focus{border-color:var(--moss)}
+
+/* 图鉴 */
+.alb-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.alb-btns{display:flex;flex-direction:column;gap:8px;flex:0 0 auto}
+.alb-btns .btn{width:auto;padding-left:14px;padding-right:14px;white-space:nowrap}
+/* 社区投稿的标记：压右上角。
+   左上角已经被稀有度标签占了 —— 两个都放左边就是叠在一起，别问我怎么知道的 */
+.alb .up{
+  position:absolute;right:6px;top:6px;z-index:2;font-size:9px;font-weight:800;
+  padding:2px 6px;border-radius:20px;background:var(--moss);color:#fff;letter-spacing:.5px;
+}
+/* 投稿与审核 */
+.draft{display:block;width:100%;max-height:210px;object-fit:contain;border-radius:12px;
+  background:#EFEDE7;margin-bottom:13px}
+.pend{display:flex;gap:12px;align-items:flex-start}
+.pend img{width:84px;height:84px;flex:0 0 84px;border-radius:11px;object-fit:cover;background:#EFEDE7}
+.pend-b{flex:1;min-width:0}
+.pend .pn{font-size:14px;font-weight:800;margin-bottom:3px}
+.pend .mine{font-size:10px;font-weight:800;color:var(--moss);margin-left:6px;
+  background:var(--moss-l);border-radius:20px;padding:1px 7px}
+.bar-wrap{height:5px;border-radius:4px;background:var(--silver-l);overflow:hidden;margin:8px 0 5px}
+.bar-wrap i{display:block;height:100%;background:var(--moss);transition:width .3s}
+.vote-row{display:flex;gap:8px;margin-top:9px}
+.vote-row .btn{width:auto;flex:1;padding-left:0;padding-right:0}
+.btn.sm.ok{background:var(--moss);color:#fff}
+.btn.sm.ok:disabled{opacity:.5}
+/* 锁定提示：标题单独一行、说明在下面。
+   原来是标题和说明并排，在 390px 宽度下会挤成"标题 + 半句换行"，看着像没排过版 */
+.lk-line .lk-t{font-size:14px;font-weight:800;margin-bottom:5px}
+/* 十连结果 */
+.batch-sum{font-size:13.5px;color:var(--ink2);margin-bottom:11px}
+.batch-sum b{color:var(--ink);font-size:15px}
+.batch-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.bg-item{position:relative;border-radius:10px;overflow:hidden;background:#EFEDE7;aspect-ratio:1/1}
+.bg-item img{width:100%;height:100%;object-fit:cover;display:block}
+.bg-item.dup img{opacity:.4}
+.bg-r{position:absolute;left:4px;top:4px;font-size:9px;font-weight:800;color:#fff;
+  background:rgba(20,19,17,.55);border-radius:20px;padding:1px 6px}
+.bg-dup{position:absolute;inset:auto 0 0 0;text-align:center;font-size:9px;font-weight:800;
+  color:#fff;background:rgba(20,19,17,.6);padding:2px 0}
+.draw-card.dup img{filter:grayscale(.7);opacity:.75}
+.alb-prog{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.1;font-variant-numeric:tabular-nums}
+.alb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+.alb{
+  position:relative;border-radius:12px;overflow:hidden;aspect-ratio:3/4;background:#EDEAE3;
+  border:1px solid var(--line);
+}
+.alb img{width:100%;height:100%;object-fit:cover}
+.alb.lock img{filter:grayscale(1) brightness(.34);opacity:.55}
+.alb .rk{
+  position:absolute;top:6px;left:6px;font-size:9px;font-weight:900;padding:2px 7px;border-radius:5px;
+  background:rgba(14,14,14,.72);color:#D8D3C8;backdrop-filter:blur(4px);letter-spacing:.4px;
+}
+.alb .rk.ssr{background:linear-gradient(135deg,#B5452F,#E0803A);color:#fff}
+.alb .rk.sr{background:rgba(201,138,46,.92);color:#231A0A}
+.alb .nm{
+  position:absolute;left:0;right:0;bottom:0;padding:16px 7px 6px;color:#fff;font-size:9.5px;
+  font-weight:700;background:linear-gradient(transparent,rgba(14,14,14,.85));line-height:1.35;
+}
+.alb.lock .nm{color:#B5B0A6}
+.alb .lockmark{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:22px;opacity:.7;
+}
+.alb.new::after{
+  content:"NEW";position:absolute;right:6px;top:6px;font-size:8px;font-weight:900;
+  background:var(--seal);color:#fff;padding:2px 5px;border-radius:4px;
+}
+
+/* 抽卡结果 */
+.draw-card{
+  width:210px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--card);
+  box-shadow:0 20px 46px -14px rgba(0,0,0,.5);animation:drawIn .55s cubic-bezier(.2,1.4,.4,1) both;
+}
+@keyframes drawIn{from{opacity:0;transform:scale(.72) rotateY(38deg)}to{opacity:1;transform:none}}
+.draw-card img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.draw-card .dc-b{padding:14px 16px 16px;text-align:center}
+.draw-card .dc-b .r{font-size:11px;font-weight:900;letter-spacing:2px;color:var(--amber)}
+.draw-card .dc-b .n{font-size:16px;font-weight:800;margin-top:5px}
+.draw-card .dc-b .d{font-size:12px;color:var(--ink2);margin-top:6px;line-height:1.6}
+
+/* ================= 我的 · 工牌 ================= */
+.idcard{
+  border-radius:17px;overflow:hidden;background:var(--paper);
+  box-shadow:0 14px 34px -12px rgba(34,32,29,.34);border:1px solid var(--line);
+}
+.idcard .ic-top{
+  background:var(--moss);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;
+}
+.idcard .ic-top .l{color:#fff;font-size:11px;font-weight:800;letter-spacing:2.4px}
+.idcard .ic-top .r{color:#C9CFC0;font-size:9px;letter-spacing:1.4px}
+.idcard .ic-mid{padding:16px;display:flex;gap:14px}
+.idcard .ic-mid img{width:78px;height:98px;object-fit:cover;border-radius:9px;flex:0 0 78px;background:#EDEAE3}
+.idcard .ic-name{font-size:18px;font-weight:800;letter-spacing:1.5px}
+.idcard .ic-id{font-size:10.5px;color:var(--ink3);margin-top:3px;font-variant-numeric:tabular-nums}
+.idcard .ic-dept{
+  display:inline-block;font-size:10.5px;background:var(--moss-l);color:var(--moss-d);
+  font-weight:800;padding:3px 10px;border-radius:20px;margin-top:9px;
+}
+.idcard .ic-meta{font-size:10.5px;color:var(--ink2);margin-top:9px;line-height:1.62}
+.idcard .ic-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 14px;text-align:center}
+.idcard .ic-stats div{background:#F1EFE9;border-radius:10px;padding:9px 0}
+.idcard .ic-stats .v{font-size:15.5px;font-weight:800;font-variant-numeric:tabular-nums}
+.idcard .ic-stats .k{font-size:9px;color:var(--ink3);margin-top:1px}
+.barcode{
+  height:30px;margin:0 16px;border-radius:3px;
+  background:repeating-linear-gradient(90deg,#22201D 0 1.6px,transparent 1.6px 3.2px,#22201D 3.2px 4px,transparent 4px 7px);
+}
+.idcard .ic-code{
+  text-align:center;font-size:9px;color:var(--ink3);letter-spacing:2.4px;margin-top:5px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;
+}
+.idcard .ic-foot{
+  padding:0 16px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:12px;
+}
+.idcard .ic-note{font-size:9.5px;color:var(--ink3);line-height:1.55}
+.stamp{
+  width:54px;height:54px;border:2px solid var(--seal);border-radius:50%;color:var(--seal);
+  display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;
+  text-align:center;line-height:1.22;transform:rotate(-12deg);flex:0 0 54px;
+}
+
+/* 列表行 */
+.row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 0;border-bottom:1px solid var(--line2);text-align:left;width:100%;
+}
+.row:last-child{border-bottom:none}
+.row .rl{font-size:13.5px;font-weight:600}
+.row .rd{font-size:11.5px;color:var(--ink3);margin-top:2px}
+.row .rv{font-size:13.5px;font-weight:800;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row:active{opacity:.7}
+
+/* 开关 */
+.sw{width:44px;height:26px;border-radius:20px;background:var(--silver);position:relative;transition:.2s;flex:0 0 44px}
+.sw::after{
+  content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;
+  background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.24);
+}
+.sw.on{background:var(--moss)}
+.sw.on::after{transform:translateX(18px)}
+
+/* ================= 弹层 ================= */
+.sheet{
+  position:fixed;inset:0;z-index:150;display:none;
+}
+.sheet.on{display:block}
+.sheet-bg{position:absolute;inset:0;background:rgba(20,19,17,.55);backdrop-filter:blur(3px);animation:fadeIn .2s ease both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.sheet-body{
+  position:absolute;left:0;right:0;bottom:0;max-width:430px;margin:0 auto;
+  background:var(--paper);border-radius:22px 22px 0 0;padding:22px 18px calc(24px + var(--safe));
+  max-height:88vh;overflow-y:auto;animation:sheetUp .3s cubic-bezier(.2,1,.4,1) both;
+}
+@keyframes sheetUp{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+.sheet-title{font-size:17px;font-weight:800;letter-spacing:.5px;margin-bottom:4px}
+.sheet-sub{font-size:12px;color:var(--ink3);margin-bottom:16px;line-height:1.65}
+
+/* ================= Toast ================= */
+.toast{
+  position:fixed;left:50%;bottom:calc(var(--tabh) + var(--safe) + 22px);transform:translate(-50%,12px);
+  background:var(--ink);color:#F4F1EA;font-size:13px;font-weight:700;letter-spacing:.3px;
+  padding:11px 22px;border-radius:24px;opacity:0;pointer-events:none;transition:.24s;
+  z-index:300;max-width:88vw;text-align:center;line-height:1.5;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+/* 撸猫页底部被投喂按钮区(.cat-dock ≈124px)占满，把 toast 抬到其上方，避免遮挡控件 */
+body[data-tab="cat"] .toast{bottom:calc(var(--tabh) + var(--safe) + 146px)}
+
+/* ================= 首次引导 ================= */
+.guide{
+  position:fixed;inset:0;z-index:180;background:rgba(20,19,17,.72);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;padding:26px;
+}
+.guide.on{display:flex;animation:fadeIn .25s ease both}
+.guide-box{
+  background:var(--paper);border-radius:20px;padding:24px 22px;max-width:340px;width:100%;
+  animation:sheetUp .34s cubic-bezier(.2,1,.4,1) both;
+}
+.guide-box h3{font-size:19px;font-weight:800;letter-spacing:1px;margin-bottom:6px}
+.guide-box .gs{font-size:12.5px;color:var(--ink3);margin-bottom:18px;line-height:1.7}
+.guide-item{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line2)}
+.guide-item:last-of-type{border-bottom:none}
+.guide-item .gi{font-size:19px;flex:0 0 24px;line-height:1.5}
+.guide-item .gt{font-size:13.5px;font-weight:700}
+.guide-item .gd{font-size:12px;color:var(--ink2);margin-top:2px;line-height:1.6}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+/* 「减少动效」开关：由 body.reduce-motion 驱动（设置在 render 里同步）。
+   与上面的系统偏好是两条独立路径，用户手动开关同样生效。 */
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after{
+  animation-duration:.01ms !important;animation-iteration-count:1 !important;
+  transition-duration:.01ms !important;
+}
+body.reduce-motion #app{scroll-behavior:auto}
+
+/* 从首页"投喂"快捷入口进来时，投喂区脉冲三下，把视线带到该操作的地方 */
+.feed-row.attn .feed-btn{animation:feedPulse 1s ease-in-out 3;border-color:rgba(201,138,46,.85)}
+@keyframes feedPulse{0%,100%{transform:none}50%{transform:translateY(-6px)}}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ===================== 启动页 ===================== -->
+  <div class="onboard" id="onboard">
+    <div class="ob-bg"><img src="assets/t16.jpg" alt="土豆"></div>
+    <div class="ob-veil"></div>
+    <div class="ob-paw" id="obPaw">🐾</div>
+    <div class="ob-body">
+      <div class="ob-brand">JZCA · 姜浩张超画室</div>
+      <div class="ob-title">姜校长<br>在等你</div>
+      <div class="ob-status" id="obStatus">正在为你制作工牌…</div>
+      <div class="ob-bar"><i id="obBar"></i></div>
+      <div class="ob-card" id="obCard">
+        <div class="paw">🐾</div>
+        <div class="tx" id="obCardText"></div>
+      </div>
+      <button class="ob-enter" id="obEnter">进 入 办 公 室</button>
+    </div>
+  </div>
+
+  <!-- ===================== 主应用 ===================== -->
+  <div id="main" class="hidden">
+
+    <header class="topbar">
+      <div class="tb-l" id="tbL"></div>
+      <div class="tb-t" id="tbT">校长办公室</div>
+      <div class="tb-r" id="tbR"></div>
+    </header>
+
+    <div class="pages" id="pageHost"></div>
+
+    <nav class="tabbar" id="tabbar">
+      <button data-tab="home" class="on"><i>🏛️</i><span>校长</span></button>
+      <button data-tab="cat"><i>🐾</i><span>撸猫</span></button>
+      <button data-tab="dept"><i>💬</i><span>部门</span></button>
+      <button data-tab="studio"><i>🎨</i><span>剪辑室</span></button>
+      <button data-tab="me"><i>🎫</i><span>我的</span></button>
+    </nav>
+
+  </div>
+
+  <div class="sheet" id="sheet">
+    <div class="sheet-bg" data-close></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+
+  <div class="guide" id="guide">
+    <div class="guide-box">
+      <h3>欢迎入职</h3>
+      <div class="gs">你已获得一张工牌。办公室里有只猫，职位是校长，它不打算管事。</div>
+      <div class="guide-item"><div class="gi">🏛️</div><div><div class="gt">校长</div><div class="gd">看它此刻在干嘛，投今天的一票</div></div></div>
+      <div class="guide-item"><div class="gi">🐾</div><div><div class="gt">撸猫</div><div class="gd">戳它、按住撸背、拖东西喂它</div></div></div>
+      <div class="guide-item"><div class="gi">💬</div><div><div class="gt">部门</div><div class="gd">六个部门，先看看大家在说什么</div></div></div>
+      <div class="guide-item"><div class="gi">🎨</div><div><div class="gt">剪辑室</div><div class="gd">做表情包、抽图鉴，攒鱼干全靠它</div></div></div>
+      <button class="btn" style="margin-top:20px" id="guideOk">知道了，进去看看</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script>
+/* =========================================================================
+   姜校长办公室 · P0 演示版
+   单文件 / 无后端 / localStorage
+   P0 目标：一个人也能玩 10 分钟，第二天还想再打开一次。
+   ========================================================================= */
+(function(){
+'use strict';
+
+/* ---------------------------------------------------------------
+   1. 静态数据
+   --------------------------------------------------------------- */
+
+// 17 张原片。r = 稀有度，cat = 姿态分类（用于状态文案与戳的反应）
+var PHOTOS = [
+  {id:'t10', r:'SSR', n:'大脸暴击', d:'唯一一张正脸大特写，最贵的表情包原料', cat:'face'},
+  {id:'t16', r:'SR',  n:'坐等投喂', d:'坐在办公室地上，等你给点吃的',       cat:'sit'},
+  {id:'t09', r:'SR',  n:'绿凳威仪', d:'坐在那把绿塑料凳上，低头闭眼',       cat:'sit'},
+  {id:'t13', r:'SR',  n:'举爪',     d:'躺在地上露肚皮，一只爪举着',         cat:'lie'},
+  {id:'t07', r:'R',   n:'低头',     d:'低头不看你，标准的证件照气质',       cat:'face'},
+  {id:'t05', r:'R',   n:'趴宣传册', d:'趴在画室宣传册上睡着了',             cat:'sleep'},
+  {id:'t02', r:'R',   n:'案头小憩', d:'整只摊在办公桌上，横着睡',           cat:'sleep'},
+  {id:'t03', r:'R',   n:'巡视',     d:'坐在绿凳上侧头看，背后是办公室',     cat:'sit'},
+  {id:'t14', r:'R',   n:'摊开',     d:'躺在地板上四肢伸展，毫无形象',       cat:'lie'},
+  {id:'t12', r:'R',   n:'任人摆布', d:'被翻过来露出肚皮，也没反抗',         cat:'lie'},
+  {id:'t17', r:'R',   n:'占领办公桌',d:'伸展开占了大半张桌子',              cat:'sleep'},
+  {id:'t15', r:'R',   n:'俯拍',     d:'从上方拍的，趴着不动的背影',         cat:'sleep'},
+  {id:'t06', r:'N',   n:'低头近景', d:'坐在绿凳上低头，离得近一些',         cat:'sit'},
+  {id:'t11', r:'N',   n:'翘尾',     d:'趴在地上，尾巴翘起来',               cat:'lie'},
+  {id:'t04', r:'N',   n:'蜷缩',     d:'在黑色椅子上缩成一团睡觉',           cat:'sleep'},
+  {id:'t01', r:'N',   n:'糊了的那张',d:'唯一一张没拍清楚的，趴在电脑椅上。绝版', cat:'sleep'},
+  {id:'t08', r:'N',   n:'巡视办公区',d:'俯拍整个办公区，它站在纸箱旁边',     cat:'room'}
+];
+var PHOTO_BY_ID = {};
+PHOTOS.forEach(function(p){ PHOTO_BY_ID[p.id] = p; });
+
+var RARITY_W = {SSR:4, SR:16, R:40, N:40};
+
+/* ---- 卡池规则 ----
+   改这里的任何一个数，前端、server.js、schema.sql 三处都要跟着改。 */
+// 投稿门槛：好感度 30 = Lv.3（小组长）。每天最多攒 20 出头好感度，大概两三天活跃。
+// 白送会让人随手传垃圾；定到 Lv.4（60）又会让这功能头一周等于不存在。
+var CARD_UPLOAD_LEVEL = 3;
+// 批量抽取门槛：好感度 60 = Lv.4（主管）。连抽是"消耗大户"的功能，往后放一档
+var BATCH_DRAW_LEVEL = 4;
+var DRAW_COST = 30;
+var BATCH_N = 10;
+// 抽到重复返还三分之一
+var DUP_REFUND = Math.floor(DRAW_COST / 3);
+
+// 社区投稿的卡 id 长这样：c12。本地 17 张是 t01~t17。
+// 为什么要能认出来：normalizeState 会拿这份名单过滤存档，
+// 不认 c 开头的 id 的话，用户重开一次页面，他抽到的社区卡就全被当成脏数据删掉了。
+function isCardId(id){ return !!PHOTO_BY_ID[id] || /^c\d+$/.test(String(id || '')); }
+
+// 社区投稿 → 页面认识的卡片形状。
+// 稀有度统一给 R：这是同事拍的日常照，不是从 17 张原创里选出来的"作品"，
+// 把它塞进 SR/SSR 会让原本稀缺的那几张掉价。
+function cardToPhoto(c){
+  return { id: 'c' + c.id, r: 'R', n: c.name, d: '由 ' + (c.author || '同事') + ' 投稿 · 大家投票通过',
+           cat: 'face', img: c.img, community: true };
+}
+// 一张卡的图片地址：本地 17 张走 assets，社区卡走后端给的 img 字段
+function imgOf(p){ return p && p.img ? p.img : ('assets/' + p.id + '.jpg'); }
+// 当前卡池 = 本地 17 张 + 已经过审的社区投稿
+function cardPool(){
+  var out = PHOTOS.slice();
+  (remote.cards || []).forEach(function(c){ out.push(cardToPhoto(c)); });
+  return out;
+}
+
+var DEPTS = [
+  {id:'office',    n:'校长办公室', ic:'📋', c:'#5A6152', rl:'官方 · 必读',
+   d:'土豆的每日状态、画室公告、每日议题投票。', foot:'今日更新 3 条', open:true},
+  {id:'academic',  n:'教务处',     ic:'🎨', c:'#C98A2E', rl:'同人 · 内容主阵地',
+   d:'学生画的土豆二创、速写、表情包草稿、手写语录。', foot:'今日更新 11 条', open:true},
+  {id:'discipline',n:'纪检委',     ic:'🕵️', c:'#B5452F', rl:'搞笑 · 高互动',
+   d:'举报土豆今天又睡了几小时、又偷吃了谁的零食。', foot:'今日 1 起在审', open:true},
+  {id:'logistics', n:'后勤处',     ic:'🍚', c:'#7A8CA3', rl:'经济系统 · 你的岗位',
+   d:'投喂记录、小鱼干账本、物资申请。', foot:'账上见工牌', open:true},
+  {id:'media',     n:'宣传科',     ic:'📸', c:'#8C877C', rl:'创作工具',
+   d:'表情包工厂。选一张土豆原片，加字，一键生成。', foot:'今日出图 23 张', open:true},
+  {id:'roof',      n:'天台',       ic:'🌙', c:'#D8D3C8', rl:'匿名 · 尚未开放',
+   d:'不发工牌、不显示身份、不记名的树洞。', foot:'需要后端支持', open:false}
+];
+var DEPT_BY_ID = {};
+DEPTS.forEach(function(d){ DEPT_BY_ID[d.id] = d; });
+
+// 预置内容：全部标注 demo，不伪装成真实用户
+var POSTS = {
+  office: [
+    {t:'【公告第 1 号】本站开张', c:'即日起，姜校长办公室对外开放。\n\n由教务老师负责运营，校长本人不参与管理，也不打算参与。\n\n有事请留言，回复时间不定。', w:'姜校长办公室', ago:'今天 09:12', lk:12},
+    {t:'今日状态：它趴在宣传册上睡了整个下午', c:'14:02 拍到的。宣传册是上周刚印的，现在上面有一个猫形的凹痕。\n\n它睡了大概两个小时，中间翻了一次身。', w:'校长办公室', ago:'今天 14:05', lk:23},
+    {t:'关于"这不是学校官方平台"这件事', c:'这个站是教务老师一个人做的，不是学校的官方渠道。\n\n它存在的唯一理由，是办公室里有一只猫。\n\n在这上面说的话，不代表画室，也不代表任何老师。', w:'姜校长办公室', ago:'昨天 20:30', lk:31}
+  ],
+  academic: [
+    {t:'投稿｜我画的姜校长', c:'用的是速写本，2B 铅笔，画了大概四十分钟。\n\n它当时就坐在那把绿凳子上，一动不动，很配合。', w:'（演示投稿）', ago:'今天 11:40', lk:18},
+    {t:'速写课代表画的这张，校长本人看了一眼就走了', c:'据说它看完之后转了个身，背对着画走掉了。\n\n作者表示不知道这算通过还是不通过。', w:'（演示投稿）', ago:'今天 15:22', lk:9},
+    {t:'征集：你们想看校长做哪些姿势？', c:'评论区留言。攒够五个我就去蹲它。\n\n已经有人点了"打哈欠"和"伸懒腰"。', w:'（演示投稿）', ago:'昨天 16:10', lk:14}
+  ],
+  discipline: [
+    {t:'举报！今天下午它占了我的座位整整两小时', c:'14:00 到 16:00，那把椅子是空的，但上面有猫。\n\n我站着画了两张速写。请纪检委给个说法。', w:'（演示举报）', ago:'今天 16:05', lk:26},
+    {t:'【判罚公示】占用办公桌一案', c:'案件：土豆于今日 14:00–16:00 期间占用办公椅一张。\n经全员投票，判定「有罪」。\n\n处罚：扣发鱼干 30 条，缓期执行。\n备注：校长表示不服，但未提出申诉。', w:'纪检委', ago:'今天 16:20', lk:41},
+    {t:'举报：柜子上的猫条少了一根', c:'包装袋被撕开了，放在原来的位置上，装作无事发生。\n\n作案时间应该是午休期间。嫌疑人只有一位。', w:'（演示举报）', ago:'昨天 13:50', lk:33}
+  ],
+  logistics: [
+    {t:'今日投喂记录', c:'09:30 小鱼干 ×2（教务老师）\n11:40 猫条 ×1（未署名）\n14:20 罐头 ×1（后勤处）\n16:00 小鱼干 ×3（路过的人）\n\n合计：7 次。它一次都没说谢谢。', w:'后勤处', ago:'今天 16:30', lk:19},
+    {t:'提案：申请为校长添置猫爬架', c:'预算待定。\n\n现状：已收到 7 个附议，尚未通过。\n校长意见：不需要。（未采纳）', w:'后勤处', ago:'昨天 10:15', lk:22},
+    {t:'鱼干账本（本月）', c:'本月共发放鱼干 2,140 条。\n其中投喂消耗 1,180 条，抽卡消耗 620 条。\n\n结论：大部分鱼干最后变成了它肚子上的肉。', w:'后勤处', ago:'昨天 18:00', lk:28}
+  ],
+  media: [
+    {t:'本周表情包产出 TOP 3', c:'① "已阅"——大脸那张配的，被转出去最多\n② "我不想上班"——用的趴桌子那张\n③ "重画"——配的低头证件照，据说美术生看了很难受', w:'宣传科', ago:'今天 17:10', lk:37},
+    {t:'教程：怎么用表情包工厂', c:'进剪辑室 → 选一张照片 → 选文案（或者自己打）→ 生成 → 长按保存。\n\n建议一句话不要超过 12 个字，手机上看不清楚。', w:'宣传科', ago:'昨天 11:00', lk:15},
+    {t:'征集：还缺什么文案？', c:'现在已经有了"已阅"、"不批"、"再画一遍"。\n\n有人提议加"这个色不行"和"结构呢"，还在考虑。', w:'宣传科', ago:'昨天 15:40', lk:11}
+  ]
+};
+
+// 每日议题：[题目, [选项...]]  —— 完整 52 条见 playbook.html
+var TOPICS = [
+  ['校长今天心情几分？', ['3 分','6 分','9 分','它没有情绪']],
+  ['土豆现在在想什么？', ['鱼干','睡觉','你们的速写','什么都不想']],
+  ['今天该给它加餐吗？', ['该','不该','先欠着']],
+  ['它刚才那一眼是什么意思？', ['嫌弃','困了','没看见你','看穿了你']],
+  ['如果土豆是老师，它教哪科？', ['速写','色彩','睡姿','纪检']],
+  ['它最喜欢待在哪儿？', ['绿凳子','木桌','宣传册上','你腿上']],
+  ['今天办公室最吵的是谁？', ['老师','学生','空调','它打呼']],
+  ['它今天巡视过办公室几次？', ['0 次','1 次','无数次','一直在巡视']],
+  ['如果它开口说话，第一句是什么？', ['饿了','出去','重画','（沉默）']],
+  ['它今天被摸了几次？', ['0 次','1–3 次','4–10 次','数不清了']],
+  ['哪种零食它最无法拒绝？', ['小鱼干','猫条','罐头','你手里的任何东西']],
+  ['今天它更想做什么？', ['睡觉','吃饭','被摸','谁都不理']],
+  ['如果给土豆涨工资，该涨多少？', ['翻倍','三倍','它不领工资','用鱼干结算']],
+  ['土豆的隐藏技能是什么？', ['瞬移','无底洞食量','一秒入睡','看穿人心']],
+  ['它今天的眼睛睁开了几成？', ['一成','三成','五成','全程闭合']],
+  ['它此刻的内心独白是？', ['……','………','…………','无可奉告']],
+  ['土豆的战斗力评估？', ['战五渣','深藏不露','靠体重压制','无敌']],
+  ['它对联考倒计时的态度是？', ['关我什么事','我知道','我比你们紧张','已阅']],
+  ['土豆今天走了多少步？', ['不到 100','100–500','500 以上','它没动过']],
+  ['它最讨厌办公室的什么？', ['噪音','陌生人','被打扰','没有吃的']],
+  ['如果它给你一句评语，会是什么？', ['还行','再练练','有进步','不予评价']],
+  ['土豆的管理风格是？', ['放养式','高压式','无为而治','随缘']],
+  ['办公室的绿凳子是谁的？', ['它的','谁坐谁倒霉','公共财产','已被占领']],
+  ['它今天的心情用天气比喻？', ['晴','多云','阴','局部有脾气']],
+  ['它的午睡最长记录是？', ['1 小时','3 小时','半天','一整天']],
+  ['土豆对速写作业的态度？', ['已阅','不批','重画','与我无关']],
+  ['它此刻的体重是？', ['标准','略重','圆满','拒绝回答']],
+  ['它的作息更像？', ['猫','老人','无业游民','校长']],
+  ['它每天上班的意义是？', ['吃饭','睡觉','看着你们','它就是意义本身']],
+  ['今天谁最需要被它安慰？', ['画不动的','刚被批评的','快联考的','没有人']]
+];
+
+// 状态文案（按姿态分类）
+var STATUS = {
+  sleep: [['趴着不动了','办公室 · 桌上'],['睡着了','办公室 · 椅子上'],['闭着眼，不知道醒着没','办公室 · 宣传册上'],['睡得很沉','办公室 · 木桌']],
+  sit:   [['坐在绿凳上发呆','办公室 · 绿凳子'],['坐得很端正，在看你们','办公室 · 门口附近'],['坐着，但不打算动','办公室 · 绿凳子']],
+  lie:   [['翻肚皮了','办公室 · 地上'],['四肢摊开，完全躺平','办公室 · 地板'],['躺着举了一只爪','办公室 · 地上']],
+  face:  [['盯着你看','办公室 · 你面前'],['眯着眼，好像不太满意','办公室 · 桌上'],['低头，不看你','办公室 · 你手边']],
+  room:  [['在办公区巡视','办公室 · 过道']]
+};
+var ST_TAGS = [['摸鱼中','moss'],['值班',''],['拒绝营业','seal'],['在岗','moss'],['今日第 N 次','amber']];
+
+// 状态标签：每天固定挑 2 个（同一天刷新不变），'今日第 N 次' 里的 N 用当天随机次数填。
+// 旧写法是 ST_TAGS.slice(0,2) 且对前两项做 replace('N')——那两个标签里根本没有 N，
+// 结果 replace 是空转，而后 3 个标签永远不会出现。
+function stTags(){
+  var n = String(1 + rint(4));
+  var a = hash(today() + 'tag');
+  var i = a % ST_TAGS.length;
+  var j = (i + 1 + (a >>> 8) % (ST_TAGS.length - 1)) % ST_TAGS.length;
+  return [ST_TAGS[i], ST_TAGS[j]].map(function(t){
+    return { txt: t[0].replace('N', n), cls: t[1] };
+  });
+}
+
+// 戳它的反应：head / body / tail
+var POKE = {
+  head: [['它眯起眼睛看了你一眼','t10'],['它把头扭到一边','t09'],['它打了个哈欠，没理你','t06'],['它盯着你，眼神不太友好','t07']],
+  body: [['它翻了个身，把肚皮露给你','t13'],['它伸了个懒腰','t14'],['它完全没反应，继续睡','t05'],['它被你摸得摊开了','t12']],
+  tail: [['尾巴甩了一下','t11'],['它站起来走了两步','t03'],['它换了个方向趴着','t01'],['它爬上了桌子','t17']]
+};
+
+var FEEDS = [
+  {id:'dried', n:'小鱼干', ic:'🐟', cost:20, say:['它吃得很慢，边吃边看你。','吃完了，头也不回地走了。','它把最后一条叼到椅子底下藏起来。']},
+  {id:'can',   n:'罐头',   ic:'🥫', cost:40, say:['它罕见地站起来了。','吃得很干净，碗底都舔了。','它吃罐头的时候允许你摸一下。']},
+  {id:'stick', n:'猫条',   ic:'🍡', cost:15, say:['它几口就吃完了，然后看着你。','它咬住了包装袋不松口。','吃完之后舔了舔嘴。']}
+];
+
+// 表情包预设文案（完整 40 条见 playbook.html）
+var MEME_TEXTS = ['已阅','不批','重画','再练练','我不想上班','你说得对，但我拒绝','别问了',
+  '这个色不行','形不准','结构不对','结构呢？','光从哪来','画完了吗','还差多少张',
+  '我饿了','鱼干呢','交出来','我睡了，有事明天说','别摸我','我保持沉默','你不要过来啊',
+  '上班使我困倦','这届学生不太行','还行吧','勉强及格','累了，不解释了','我说了算','它是校长'];
+
+/* ---------------------------------------------------------------
+   2. 存储
+   --------------------------------------------------------------- */
+var LSK = 'jzca.profile', LSKEY = 'jzca.state';
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+// 注意：不能用 toISOString()，那是 UTC，中国时区晚上会算成第二天
+function today(){
+  var d = new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+}
+function dayNo(ds){
+  var p = ds.split('-');
+  return Math.floor(new Date(+p[0], +p[1]-1, +p[2]).getTime() / 86400000);
+}
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function rint(n){ return Math.floor(Math.random()*n); }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+// 稳定哈希：同一天/同一题永远得到同样的伪随机结果
+function hash(str){
+  var h = 2166136261;
+  for (var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = (h*16777619) >>> 0; }
+  return h >>> 0;
+}
+function seeded(str, i){ return (hash(str + ':' + i) % 1000) / 1000; }
+// 震动：浏览器要求用户先有过交互，否则会抛 warning
+var interacted = false;
+function markInteract(){ interacted = true; }
+document.addEventListener('pointerdown', markInteract, {once:true, passive:true});
+document.addEventListener('touchstart', markInteract, {once:true, passive:true});
+function vibe(ms){ try { if (interacted && navigator.vibrate) navigator.vibrate(ms); } catch(e){} }
+
+function read(k, fb){
+  try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch(e){ return fb; }
+}
+function write(k, v){
+  try { localStorage.setItem(k, JSON.stringify(v)); return true; }
+  catch(e){ return false; }
+}
+
+function newProfile(){
+  var y = new Date().getFullYear();
+  var n = rint(9000) + 1000;
+  var d = pick(DEPTS.filter(function(x){ return x.open; }));
+  return {
+    version: 1,
+    staffId: 'JZ-' + y + '-' + pad2(rint(90)+10) + n,
+    dept: d.id,
+    level: 1,
+    coins: 120,
+    joinedAt: today(),
+    lastCheckIn: '',
+    streak: 0,
+    nickname: '',
+    pokesToday: 0,
+    pokesDate: today(),
+    exportClicks: 0
+  };
+}
+function newState(){
+  return {
+    album: { unlocked: ['t16'], fresh: [] },
+    votes: {},
+    feedings: [],
+    affection: 0,
+    liked: [],      // 已点赞的帖子 key
+    likePaid: [],   // 已发放过"附议奖励"的 key。取消后再点赞不重复发钱，否则来回切换可无限刷鱼干
+    memes: 0,
+    draws: 0,
+    pettedAt: 0,
+    settings: { reduceMotion: false }
+  };
+}
+
+var LEVELS = ['实习生','正式员工','小组长','主管','副校长'];
+// 升级门槛：好感度
+var LEVEL_NEED = [0, 12, 30, 60, 100];
+// 好感度硬上限。**必须由 LEVEL_NEED 推导**，不能另写一个数字 ——
+// 否则"我的"页的文字分母（/AFF_MAX）会和进度条分母（/100）分叉，
+// 同一屏出现两个百分比（曾经的 150 vs 100 就是这个毛病）。
+// 归一化夹取、加分夹取、进度条宽度三处统一引用本常量。
+var AFF_MAX = LEVEL_NEED[LEVEL_NEED.length - 1];
+
+/* 存档归一化 ------------------------------------------------------
+   读存档和导入备份都走这里。旧版本缺字段、手工改坏、少写一层对象，
+   都会在这一步被补齐成合法值，避免后面出现 undefined / NaN 把页面搞崩。
+   注意：本段用到的 LEVELS / PHOTO_BY_ID 必须在这之前就已赋值——
+   否则归一化自己会先抛错，而且只在"老用户"身上炸，最难发现。 */
+function isNum(v){ return typeof v === 'number' && isFinite(v); }
+function num(v, fb, min, max){
+  if (!isNum(v)) v = fb;
+  if (isNum(min) && v < min) v = min;
+  if (isNum(max) && v > max) v = max;
+  return v;
+}
+function str(v, fb){ return typeof v === 'string' ? v : fb; }
+function isArr(v){ return Object.prototype.toString.call(v) === '[object Array]'; }
+function arr(v){ return isArr(v) ? v : []; }
+var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function normalizeProfile(raw){
+  var def = newProfile();
+  if (!raw || typeof raw !== 'object') return def;
+  return {
+    version: 1,
+    staffId: str(raw.staffId, def.staffId),
+    dept: DEPT_BY_ID[raw.dept] ? raw.dept : def.dept,
+    level: Math.floor(num(raw.level, 1, 1, LEVELS.length)),
+    coins: Math.floor(num(raw.coins, 0, 0, 9999999)),
+    joinedAt: DATE_RE.test(raw.joinedAt) ? raw.joinedAt : def.joinedAt,
+    lastCheckIn: DATE_RE.test(raw.lastCheckIn) ? raw.lastCheckIn : '',
+    streak: Math.floor(num(raw.streak, 0, 0, 99999)),
+    nickname: str(raw.nickname, '').slice(0, 8),
+    pokesToday: Math.floor(num(raw.pokesToday, 0, 0, 999)),
+    pokesDate: DATE_RE.test(raw.pokesDate) ? raw.pokesDate : today(),
+    exportClicks: Math.floor(num(raw.exportClicks, 0, 0, 99999))
+  };
+}
+function normalizeState(raw){
+  var def = newState();
+  if (!raw || typeof raw !== 'object') return def;
+  var al = (raw.album && typeof raw.album === 'object') ? raw.album : {};
+  // 只保留真实存在的照片 id，并去重。
+  // 注意这里必须认社区卡（c12 这种）：它们是从服务端拉回来的，
+  // 启动那一刻还没拉，如果只认本地那 17 张，用户重开页面就会被删掉自己抽到的社区卡。
+  var seen = {};
+  var unlocked = arr(al.unlocked).filter(function(id){
+    if (!isCardId(id) || seen[id]) return false;
+    seen[id] = 1; return true;
+  });
+  if (!unlocked.length) unlocked = def.album.unlocked.slice();
+  var fresh = arr(al.fresh).filter(function(id){ return isCardId(id); });
+  return {
+    album: { unlocked: unlocked, fresh: fresh },
+    votes: (raw.votes && typeof raw.votes === 'object') ? raw.votes : {},
+    feedings: arr(raw.feedings),
+    affection: num(raw.affection, 0, 0, AFF_MAX),
+    liked: arr(raw.liked),
+    likePaid: arr(raw.likePaid),
+    memes: Math.floor(num(raw.memes, 0, 0, 99999)),
+    draws: Math.floor(num(raw.draws, 0, 0, 99999)),
+    pettedAt: num(raw.pettedAt, 0, 0),   // 毫秒时间戳，只保证非负，不设上限
+    settings: { reduceMotion: !!(raw.settings && raw.settings.reduceMotion) }
+  };
+}
+
+// 一律过一遍归一化：新用户得到默认档案，老存档/被改坏的存档会被自动补齐
+var P = normalizeProfile(read(LSK, null));
+var S = normalizeState(read(LSKEY, null));
+// save() 是本文件唯一的"状态变了"信号。共享层要上传工牌，就挂在这里，
+// 而不是在签到/投票/撸猫等十几处逐个补一句 —— 少一处就是一个永远同步不上去的 bug。
+function save(){ write(LSK, P); write(LSKEY, S); queuePush(); }
+
+function levelName(l){ return LEVELS[Math.min(l, LEVELS.length) - 1] || '实习生'; }
+function recalcLevel(){
+  var lv = 1;
+  for (var i = 0; i < LEVEL_NEED.length; i++){ if (S.affection >= LEVEL_NEED[i]) lv = i + 1; }
+  if (lv !== P.level){ P.level = lv; return true; }
+  return false;
+}
+
+function unlock(id, silent){
+  if (S.album.unlocked.indexOf(id) >= 0) return false;
+  S.album.unlocked.push(id);
+  if (!silent) S.album.fresh.push(id);
+  return true;
+}
+function lockedList(){ return PHOTOS.filter(function(p){ return S.album.unlocked.indexOf(p.id) < 0; }); }
+
+/* ---------------------------------------------------------------
+   3. DOM 与通用 UI
+   --------------------------------------------------------------- */
+var $ = function(s, r){ return (r||document).querySelector(s); };
+var $$ = function(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+var pageHost = $('#pageHost'), tbT = $('#tbT'), tbL = $('#tbL'), tbR = $('#tbR');
+var toastEl = $('#toast'), sheetEl = $('#sheet'), sheetBody = $('#sheetBody');
+
+var toastTimer = null;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('on'); }, 1700);
+}
+function openSheet(html){
+  sheetBody.innerHTML = html;
+  sheetEl.classList.add('on');
+}
+function closeSheet(){ sheetEl.classList.remove('on'); }
+
+function coinChip(){
+  return '<div class="coin-chip" id="coinChip">🐟 ' + P.coins + '</div>';
+}
+function bumpCoin(){
+  var el = $('#coinChip');
+  if (el){ el.classList.add('bump'); setTimeout(function(){ el.classList.remove('bump'); }, 460); }
+}
+
+/* ---------------------------------------------------------------
+   3b. 共享层 —— 让所有人看到同一份数据
+
+   三种运行状态，靠「页面从哪儿打开的」自动判定，不需要用户做任何设置：
+     · http(s) 打开 且 SHARE.url 留空  → 用同源接口（即 server/server.js，局域网共享）
+     · SHARE.url 填了值                → 用那个地址（Supabase，公网共享）
+     · file:// 直接打开 且 url 留空     → 单机模式，行为和原来的 P0 完全一样
+
+   为什么要自动判定而不是加个开关：扫码的人只会打开一个网址，
+   让他去理解"单机/共享"是多余的。网址长什么样，就决定了是什么模式。
+
+   还有第四种情况：**界面挂在静态托管上**（GitHub Pages 之类）。
+   那种宿主永远不会有 /rest/v1，但数据服务在另一个域名上活着。
+   这里不加"看域名猜意图"的魔法 —— 就是先试同源，404 了就换 fallback 再试一次，
+   正好复用下面那条已经验证过的判断（404 = 这个宿主没有共享接口）。
+   --------------------------------------------------------------- */
+var SHARE = {
+  url:  '',              // 例 'https://abcdefgh.supabase.co'；留空 = 同源 / 或单机
+  key:  '',              // Supabase 的 anon key；连本机 server.js 时不需要
+  // 备用数据服务地址：界面挂静态托管时靠它。
+  // 同源的 /rest/v1 必然是 404，于是自动切到这个地址继续（跨域读写已实测通过）。
+  // 留空的话，静态托管上就只会退回单机模式。
+  // ⚠️ 后端换地址了，这里要跟着改，否则 GitHub 上那份界面会退回单机。
+  fallback: 'https://jzca-office.app.workbuddy.host',
+  code: 'hz-art-2026'    // 写入共享码，必须和 schema.sql / server.js 里那个一致
+};
+
+var API = (function(){
+  if (SHARE.url) return String(SHARE.url).replace(/\/+$/, '');
+  var p = location.protocol;
+  if (p === 'http:' || p === 'https:') return '';   // 同源，用相对路径
+  return null;                                      // file:// → 单机
+})();
+var SHARED = API !== null;
+// 备用地址只切一次。不做"来回反复试"——试过还是不行就老实退回单机
+var switchedToFallback = false;
+
+// 每台设备一个固定标识，作为「我是谁」。
+// 不能用 crypto.randomUUID —— 它要求安全上下文，而局域网走的是 http，拿不到。
+var UID = (function(){
+  function gen(){ return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  try {
+    var k = 'jzca.uid', v = localStorage.getItem(k);
+    if (!v){ v = gen(); localStorage.setItem(k, v); }
+    return v;
+  } catch (e){ return gen(); }
+})();
+
+function apiFetch(path, opt){
+  opt = opt || {};
+  var headers = {};
+  // 只在真带 body 时才声明 Content-Type。
+  // 给 GET 加上 `Content-Type: application/json` 会把跨域请求变成「非简单请求」，
+  // 浏览器要先发一次 OPTIONS 预检 —— 连云端时每个读请求都平白多一个来回，
+  // 而且预检是并发的，冷启动那一屏会明显变慢。本机同源没有这问题，所以只坑云端。
+  if (opt.body !== undefined) headers['Content-Type'] = 'application/json';
+  if (SHARE.key){
+    headers['apikey'] = SHARE.key;
+    headers['Authorization'] = 'Bearer ' + SHARE.key;
+  }
+  // 记下这一次用的是哪个基地址。切换备用地址之后，先前发出去的请求会陆续回来报 404 ——
+  // 那些是**过期的失败**，不能让它们再触发一次降级（否则刚切过去就被打回单机）。
+  var usedBase = API;
+  return fetch(usedBase + path, {
+    method: opt.method || 'GET',
+    headers: headers,
+    body: (opt.body === undefined) ? undefined : JSON.stringify(opt.body)
+  }).then(function(r){
+    return r.text().then(function(t){
+      var d = null;
+      try { d = t ? JSON.parse(t) : null; } catch (e){}
+      if (!r.ok){
+        var err = new Error((d && d.message) || ('HTTP ' + r.status));
+        err.status = r.status;
+        // 404 = 这个地址上压根没有共享接口（纯静态托管，或者地址填错了）。
+        // 这跟"暂时连不上"是两回事：重试一万次也没用。
+        if (r.status === 404) demoteNoBackend(usedBase);
+        throw err;
+      }
+      return d;
+    });
+  });
+}
+function rpc(fn, args){ return apiFetch('/rest/v1/rpc/' + fn, { method: 'POST', body: args }); }
+function sel(table, qs){ return apiFetch('/rest/v1/' + table + (qs ? '?' + qs : '')); }
+
+// 云端缓存。null 表示「还没拉到」，和「拉到了但是空的」是两件事，别混
+var remote = {
+  votes: null,    // 今天的全部投票：[选项号, 选项号, ...]
+  posts: {},      // deptId -> [帖子]
+  comments: {},   // postId -> [评论]
+  mylikes: null,  // 我附议过的帖子 key 列表，用来决定按钮点没点亮
+  ccount: {},     // postId -> 评论条数，用来在按钮上显示"评论 3"
+  board: null,    // 排行榜
+  cards: null,    // 已过审的卡池照片（null = 还没拉到）
+  pending: null,  // 待大家投票的投稿
+  err: null
+};
+
+// 后端根本不存在时怎么办。三条出路，按顺序试：
+//   1) 配了 fallback 且还没试过 → 切到 fallback 再试一次（界面挂静态托管时的正常路径）
+//   2) 切过还是不行 / 没配 fallback → 安静地退回单机模式
+// 什么时候会遇到 404：把整个文件夹传到静态托管（GitHub Pages、只想给人看设计）、
+// 或者用某个预览服务打开这个 html —— 这些地址上没有 /rest/v1。
+// 这和"服务暂时挂了"必须分开处理：后者要挂横幅提醒重试，前者重试一万次也没用。
+var demoted = false;
+function clearRemote(){
+  remote.votes = null; remote.posts = {}; remote.comments = {};
+  remote.mylikes = null; remote.ccount = {}; remote.board = null;
+  remote.cards = null; remote.pending = null;
+}
+function demoteNoBackend(fromBase){
+  // 只有一个条件成立时才处理：这次失败来自**当前**基地址。
+  // 切换之后旧地址的响应陆续回来，那些失败要忽略掉
+  if (fromBase !== API) return;
+  if (!switchedToFallback && !SHARE.url && SHARE.fallback){
+    switchedToFallback = true;
+    API = String(SHARE.fallback).replace(/\/+$/, '');
+    clearRemote();
+    remote.err = null;
+    // 静默重试：用户不需要知道背后换了数据服务，他只该看到"能用"
+    setTimeout(function(){ pullFor(); }, 0);
+    return;
+  }
+  if (demoted) return;
+  demoted = true;
+  SHARED = false;
+  remote.err = null;          // 这不是错误，是本就不该联网
+  // 发帖按钮、排行榜、同步提示都会随之消失，所以要说一句，别让人以为功能丢了
+  sayLater('这个地址没有共享服务，已切回本机模式');
+}
+
+// 后端返回的图片地址是相对路径（/cardimg/3）。界面挂在别的域名上时，
+// 相对路径会指向**那个**域名 —— 图片全裂。所以统一补上数据服务的地址。
+// 云端（Supabase Storage）返回的是绝对地址，原样放行。
+function absUrl(u){
+  if (!u) return u;
+  if (/^https?:/i.test(u)) return u;
+  return u.charAt(0) === '/' ? (API + u) : u;
+}
+
+// 启动页还盖着的时候先攒着，等主界面出来了再说 ——
+// 否则这句话会被启动动画盖过去，等于没说
+var pendingSay = null;
+function sayLater(msg){
+  var m = $('#main');
+  if (m && !m.classList.contains('hidden')){ toast(msg); return; }
+  pendingSay = msg;
+}
+
+function agoText(iso){
+  var t = Date.parse(iso);
+  if (!t) return '';
+  var d = new Date(t), td = new Date();
+  var hm = pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  function same(a, b){ return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+  if (same(d, td)) return '今天 ' + hm;
+  if (same(d, new Date(td.getTime() - 86400000))) return '昨天 ' + hm;
+  return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + hm;
+}
+// 把数据库的一行变成页面里 postHTML 认识的样子
+function normPost(r){
+  return {
+    id: r.id, dept: r.dept, t: r.title, c: r.body, w: r.author,
+    ago: agoText(r.created_at), lk: r.likes || 0, kind: r.kind || 'user'
+  };
+}
+
+function pullVotes(){
+  if (!SHARED) return Promise.resolve(null);
+  // 同时拉两样：今天的全部票（算占比）+ 我自己那一票（决定界面是否显示"已投票"）。
+  // 后者不能只靠本地记录 —— 换手机或清了缓存就丢，会和服务端的"一天一票"打架。
+  return Promise.all([
+    sel('jzca_votes', 'day=eq.' + today() + '&select=opt'),
+    sel('jzca_votes', 'day=eq.' + today() + '&uid=eq.' + encodeURIComponent(UID) + '&select=opt')
+  ]).then(function(res){
+    remote.votes = (res[0] || []).map(function(r){ return r.opt; });
+    var mine = (res[1] && res[1][0]) ? res[1][0].opt : null;
+    if (mine === null || mine === undefined) delete S.votes[today()];
+    else S.votes[today()] = mine;
+    return remote.votes;
+  }).catch(function(e){ remote.err = String(e.message || e); return null; });
+}
+function pullPosts(dept){
+  if (!SHARED) return Promise.resolve([]);
+  return sel('jzca_posts', 'dept=eq.' + encodeURIComponent(dept) + '&select=*&order=created_at.desc&limit=60')
+    .then(function(rows){ remote.posts[dept] = (rows || []).map(normPost); return remote.posts[dept]; })
+    .catch(function(e){ remote.err = String(e.message || e); return []; });
+}
+function pullComments(pid){
+  if (!SHARED) return Promise.resolve([]);
+  return sel('jzca_comments', 'post_id=eq.' + Number(pid) + '&select=*&order=created_at.asc&limit=200')
+    .then(function(rows){ remote.comments[pid] = rows || []; return remote.comments[pid]; })
+    .catch(function(e){ remote.err = String(e.message || e); return []; });
+}
+function pullBoard(){
+  if (!SHARED) return Promise.resolve([]);
+  return sel('jzca_profiles', 'select=*&order=affection.desc&limit=50')
+    .then(function(rows){ remote.board = rows || []; return remote.board; })
+    .catch(function(e){ remote.err = String(e.message || e); return []; });
+}
+
+// 我附议过哪些帖子。不查这张表就只能靠本机记录，
+// 结果就是"换台设备打开，自己点过的赞全灭"。
+function pullLikes(){
+  if (!SHARED) return Promise.resolve([]);
+  return sel('jzca_likes', 'uid=eq.' + encodeURIComponent(UID) + '&select=post_id&limit=500')
+    .then(function(rows){
+      remote.mylikes = (rows || []).map(function(r){ return 'p' + r.post_id; });
+      return remote.mylikes;
+    })
+    .catch(function(e){ remote.err = String(e.message || e); return []; });
+}
+
+// 每个帖子有几条评论。
+// 为什么不用 PostgREST 的嵌套计数（select=*,jzca_comments(count)）：
+// 那样前端就得去适配嵌套返回结构，而本地服务要一模一样地仿真它，
+// 两边只要有一点形状差异，就会变成"局域网正常、上云就空白"。
+// 这里改为只取 post_id 一列回来自己数 —— 一个普通 select，两个后端行为完全一致。
+function pullCounts(){
+  if (!SHARED) return Promise.resolve(null);
+  return sel('jzca_comments', 'select=post_id&limit=3000')
+    .then(function(rows){
+      var m = {};
+      (rows || []).forEach(function(r){
+        var k = 'p' + r.post_id;
+        m[k] = (m[k] || 0) + 1;
+      });
+      remote.ccount = m;
+      return m;
+    })
+    .catch(function(e){ remote.err = String(e.message || e); return null; });
+}
+
+// 卡池：已过审的 + 待审核的。
+// select 里写明确的列名而不是 * —— 服务端那行还有个 file / bytes 字段，
+// 而且云端实现会把二进制放在行里，用 * 会把所有图片一起拖下来。
+function pullCards(){
+  if (!SHARED) return Promise.resolve([]);
+  return Promise.all([
+    sel('jzca_cards', 'status=eq.approved&select=id,uid,author,name,img&order=created_at.desc&limit=200'),
+    sel('jzca_cards', 'status=eq.pending&select=id,uid,author,name,img,yes,no&order=created_at.asc&limit=100')
+  ]).then(function(res){
+    // img 是后端给的图片地址，可能相对可能绝对 —— 统一成能直接塞进 <img src> 的
+    remote.cards = (res[0] || []).map(function(c){ c.img = absUrl(c.img); return c; });
+    remote.pending = (res[1] || []).map(function(c){ c.img = absUrl(c.img); return c; });
+    return remote.cards;
+  }).catch(function(e){ remote.err = String(e.message || e); return []; });
+}
+
+// 把「我」同步上去。发帖、评论、投票、撸猫之后都该顺手调一次
+function pushMe(){
+  if (!SHARED) return Promise.resolve(null);
+  return rpc('jzca_profile', {
+    p_code: SHARE.code, p_uid: UID, p_nickname: displayName(),
+    p_dept: P.dept, p_level: P.level, p_affection: S.affection, p_coins: P.coins
+  }).catch(function(e){ remote.err = String(e.message || e); return null; });
+}
+
+/* ---------------------------------------------------------------
+   3c. 数据的"读法" —— 页面只关心数据长什么样，不关心它从哪来
+
+   这一层存在的意义：下面所有渲染函数都只问这里要数据，
+   于是"单机"与"共享"的差别被收敛在这几个函数里，
+   不会出现"某处忘了判断 SHARED，两套逻辑互相打架"的情况。
+   --------------------------------------------------------------- */
+
+// 百分比用「最大余数法」。直接对每项 Math.round 会算出 33/33/33=99 这种
+// 加起来不满 100 的投票结果 —— 这是投票界面最不该有的瑕疵。
+function pctOf(counts){
+  var n = counts.length, i, total = 0;
+  for (i = 0; i < n; i++) total += counts[i];
+  if (!total) return counts.map(function(){ return 0; });
+  var raw = counts.map(function(c){ return c / total * 100; });
+  var out = raw.map(Math.floor);
+  var rest = 100 - out.reduce(function(a, b){ return a + b; }, 0);
+  var order = raw.map(function(v, k){ return { k: k, frac: v - Math.floor(v) }; })
+                 .sort(function(a, b){ return b.frac - a.frac; });
+  for (i = 0; i < rest; i++) out[order[i % n].k]++;
+  return out;
+}
+// 每个选项各得几票。共享模式用服务端真实票数；单机模式用按日期固定的演示票数。
+// 关键点：一次算完全部选项，返回「票数」而不是「百分比」。
+// 原实现是每个选项各自调一次百分比、并给自己那一票 +12，于是每个选项的
+// 分母都不一样，加起来也不是 100 —— 纯粹的显示 bug，不是数据问题。
+function voteCounts(n){
+  var i, out = [];
+  if (SHARED && remote.votes){
+    for (i = 0; i < n; i++) out.push(0);
+    remote.votes.forEach(function(op){
+      var k = parseInt(op, 10);
+      if (k >= 0 && k < n) out[k]++;
+    });
+    return out;
+  }
+  var q = todayTopic()[0];
+  for (i = 0; i < n; i++) out.push(6 + Math.round(seeded(q + ':' + today(), i) * 30));
+  return out;
+}
+
+// "我投的是哪一项"。选项 0 是合法选项但 falsy，
+// 所以任何地方都不能写成 if (voted) —— 那会让"投了第 1 项"看起来像没投。
+function votedOpt(){
+  var v = S.votes[today()];
+  if (v === undefined || v === null || v === '') return null;
+  var k = parseInt(v, 10);
+  return isNaN(k) ? null : k;
+}
+
+// 在共享区里显示的名字。
+// 没署名时**不能**显示"未署名"—— 全画室的帖子和排行榜上挂满"未署名"，
+// 看起来就像系统坏了，而不是有人没起名。用工牌尾号兜底：
+// 既不为空，又不像真名，正好符合"这里是员工编号"的设定。
+function displayName(){
+  var n = String(P.nickname || '').trim();
+  if (n) return n;
+  var tail = String(P.staffId || '').slice(-4);
+  return tail ? ('员工 ' + tail) : '匿名员工';
+}
+
+// 帖子的唯一键：服务端帖子有 id，用 id 最稳；预置演示帖没有 id，退回 部门:标题。
+// 这样老的点赞记录（按 dept:标题 存）不需要迁移就能继续用。
+function postKey(p, deptId){ return (p && p.id != null) ? ('p' + p.id) : (deptId + ':' + p.t); }
+
+// 某个部门的帖子：共享模式下优先用服务端数据；还没拉到或拉失败时退回预置内容。
+// 「退回」这件事是刻意的 —— 一个连不上服务器的页面，最好的表现是像以前一样能用，
+// 而不是空白。所以这里不返回 null，只在页顶挂一条 syncNote 说明实情。
+function feedOf(deptId){
+  if (SHARED && remote.posts[deptId]) return remote.posts[deptId];
+  return POSTS[deptId] || [];
+}
+
+// 这一帖我附议过没有。共享模式下以服务端为准（换台设备也不会丢），
+// 服务端列表还没拉到时退回本机记录。
+function likedOf(p, deptId){
+  var k = postKey(p, deptId);
+  if (SHARED && p && p.id != null && remote.mylikes) return remote.mylikes.indexOf(k) >= 0;
+  return S.liked.indexOf(k) >= 0;
+}
+
+// 同步失败的提示条。它同时是重试按钮 —— 只说"连不上"而不给出路，
+// 用户下一步只能去刷新页面，那等于把问题推回去。
+// 顺带把服务端/网络给的原话带出来：部署时"HTTP 401"（密钥不对）和
+// "Failed to fetch"（根本连不上）要查的方向完全不同，只写"失败"等于没说。
+function syncNote(){
+  if (!SHARED || !remote.err) return '';
+  return '<button class="sync-note" data-act="retrySync">⚠️ 连不上共享服务 · 点这里重试'
+    + '<span class="why">' + esc(String(remote.err).slice(0, 80)) + '</span></button>';
+}
+
+// 哪个页面要拉哪些数据，只在这一处声明。
+// 好处：网络请求不会散落到十几个渲染函数里，将来加页面也不会漏掉。
+function pullFor(){
+  if (!SHARED) return;
+  // 每次拉取前先清掉上一次的失败标记：网络抖一下不应该让提示条永久挂着。
+  // 真失败的话，下面任何一个 catch 会立刻把它重新置上。
+  remote.err = null;
+  var jobs = [];
+  if (cur === 'home'){
+    // 首页同时要四样：投票、办公室帖子、我点过的赞、各帖评论数。
+    // 四个请求并发发出，总耗时约等于最慢的那个，不是相加。
+    jobs.push(pullVotes(), pullPosts('office'), pullLikes(), pullCounts());
+  } else if (cur === 'dept' && deptView){
+    jobs.push(pullPosts(deptView), pullLikes(), pullCounts());
+  } else if (cur === 'me'){
+    jobs.push(pullBoard());
+  } else if (cur === 'studio'){
+    // 图鉴要卡池，表情包工厂不用 —— 但两个子页共用一个 Tab，一起拉最省事，
+    // 代价只是一个几十字节的请求
+    jobs.push(pullCards());
+  }
+  if (!jobs.length) return;
+  var mark = cur + '|' + (deptView || '');
+  Promise.all(jobs).then(function(){
+    // 数据回来时用户可能已经切走了。那就别重画 ——
+    // 重画会把撸猫页正在进行的"按住撸背"等交互打断。
+    if (mark === (cur + '|' + (deptView || ''))) render();
+  });
+}
+
+// 把「我」同步上去。save() 之后 3 秒内的连续改动合并成一次请求 ——
+// 戳猫 20 连击不该打出 20 个 HTTP 请求。
+var pushTimer = 0;
+function queuePush(){
+  if (!SHARED) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(function(){ pushTimer = 0; pushMe(); }, 3000);
+}
+// 立刻把还没发出去的那次同步发掉。
+// 场景：签到后 1 秒就切到别的 App —— 手机上这是常态，不能等到 3 秒计时器。
+function flushPush(){
+  if (!SHARED || !pushTimer) return;
+  clearTimeout(pushTimer);
+  pushTimer = 0;
+  pushMe();
+}
+
+/* ---------------------------------------------------------------
+   4. 启动流程
+   --------------------------------------------------------------- */
+var obStatus = $('#obStatus'), obBar = $('#obBar'), obPaw = $('#obPaw'),
+    obCard = $('#obCard'), obCardText = $('#obCardText'), obEnter = $('#obEnter');
+
+// 探测"是否首次进来"。这是全文件唯一一处必须直接碰 localStorage 的地方
+// （其余读写都走 read()/write() 的 try 兜底），所以同样必须兜住：
+// 浏览器禁用站点数据时（隐私模式、企业策略、Edge 的"阻止站点数据"），
+// 裸调 getItem 会抛异常，而异常发生在 IIFE 顶层 —— 整个应用直接白屏。
+var storageOk = true;      // 本地存储是否可用，用于给出一次性的提示
+var storageWarned = false; // 提示只弹一次
+var isNew = false;
+try { isNew = !localStorage.getItem(LSK); }
+catch(e){ storageOk = false; isNew = true; }
+
+// 存储不可用时要主动告诉用户"这次的东西不会留下"，
+// 否则他会以为进度丢了是 bug。必须等界面上没有遮挡物时再弹。
+// 共享模式下还要多说一句：身份标识也是存 local storage 的，存不了就意味着
+// 他每打开一次都会被当成一个新人 —— 榜单上会多出一个影子，而且"一天一票"也挡不住他。
+function warnNoStorage(){
+  if (storageOk || storageWarned) return;
+  storageWarned = true;
+  toast(SHARED
+    ? '这个浏览器禁用了本地存储：进度不会保存，共享区里的身份也只对本次有效'
+    : '这个浏览器禁用了本地存储，这次的进度不会被保存');
+}
+
+function runOnboard(){
+  var steps = [
+    {t:'正在为你制作工牌…', p:22},
+    {t:'正在核对部门编制…', p:52},
+    {t:'正在确认校长状态…', p:78},
+    {t:'工牌已发放。', p:100}
+  ];
+  var i = 0;
+  function next(){
+    if (i >= steps.length){ finish(); return; }
+    var s = steps[i++];
+    obStatus.textContent = s.t;
+    obBar.style.width = s.p + '%';
+    setTimeout(next, i === 1 ? 700 : 620);
+  }
+  function finish(){
+    var d = DEPT_BY_ID[P.dept];
+    obCardText.textContent = '工牌编号 #' + P.staffId.split('-').pop() + ' · ' + d.n + ' · ' + levelName(P.level);
+    obPaw.classList.add('stamp');
+    vibe(24);
+    obCard.classList.add('on');
+    setTimeout(function(){ obEnter.classList.add('on'); }, 380);
+    setTimeout(function(){ if (isNew) go(true); }, 1400); // 新用户自动进入
+  }
+  setTimeout(next, 620);
+}
+
+var wentIn = false;
+function go(auto){
+  // 幂等保护：新用户会先自动进入，而"进入办公室"按钮在那之前就可见了。
+  // 两处都触发过一次，就会把用户已经关掉的引导层重新弹回来。
+  if (wentIn) return;
+  wentIn = true;
+  $('#onboard').classList.add('out');
+  setTimeout(function(){
+    $('#onboard').style.display = 'none';
+    $('#main').classList.remove('hidden');
+    render();
+    if (isNew) setTimeout(function(){ $('#guide').classList.add('on'); }, auto ? 420 : 300);
+    else setTimeout(warnNoStorage, 600);   // 老用户没有引导层遮挡，直接提示
+    if (pendingSay){ toast(pendingSay); pendingSay = null; }   // 攒下来的那句话，到这里才说得出口
+  }, auto ? 560 : 0);
+}
+
+$('#guideOk').addEventListener('click', function(){
+  $('#guide').classList.remove('on');
+  // 原来这里只写 LSK（档案），没写状态键 —— 一旦启动时的 save() 变成有条件执行，
+  // 就会留下"档案存了、状态没存"的半截存档。统一走 save() 保证两个键同时落盘。
+  save();
+  setTimeout(warnNoStorage, 500);          // 等引导层退干净再提示
+});
+obEnter.addEventListener('click', function(){ go(false); });
+
+/* ---------------------------------------------------------------
+   5. Tab 路由
+   --------------------------------------------------------------- */
+var TAB_TITLE = {home:'校长办公室', cat:'撸猫', dept:'部门', studio:'剪辑室', me:'我的'};
+var cur = 'home';
+var deptView = null;   // 进入部门详情时为部门 id
+var studioSub = 'meme'; // meme | album
+
+function setTab(t){
+  cur = t;
+  if (t !== 'dept') deptView = null;
+  $$('#tabbar button').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === t); });
+  // 先用手上已有的数据画一帧 —— 切页必须零延迟，绝不能等网络
+  render();
+  window.scrollTo(0,0);
+  vibe(6);
+  // 再去拉这个页面的最新数据；拉回来会自动重画（见 pullFor）
+  pullFor();
+}
+$('#tabbar').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-tab]');
+  if (b) setTab(b.dataset.tab);
+});
+
+function render(){
+  document.body.dataset.tab = cur;   // 供 CSS 按页面微调定位（如撸猫页把 toast 抬到投喂区之上）
+  document.body.classList.toggle('reduce-motion', !!S.settings.reduceMotion);
+
+  tbT.textContent = deptView ? DEPT_BY_ID[deptView].n : TAB_TITLE[cur];
+  tbL.innerHTML = '';
+  tbR.innerHTML = (cur === 'cat') ? '' : coinChip();
+  if (deptView){
+    tbL.innerHTML = '<button class="tb-back" data-act="deptBack">‹</button>';
+  } else if (cur === 'me'){
+    tbL.innerHTML = '<span class="pill moss">在岗第 ' + (dayNo(today()) - dayNo(P.joinedAt) + 1) + ' 天</span>';
+  }
+  var html = '';
+  if (cur === 'home')   html = viewHome();
+  if (cur === 'cat')    html = viewCat();
+  if (cur === 'dept')   html = deptView ? viewDeptDetail(deptView) : viewDepts();
+  if (cur === 'studio') html = viewStudio();
+  if (cur === 'me')     html = viewMe();
+  pageHost.innerHTML = html;
+
+  if (cur === 'cat') mountCat();
+
+  // 打开图鉴即视为"看过了"：清掉本次打开时已存在的 NEW 记录。
+  // 用快照而不是直接清空，是为了保住"打开之后才抽到的那张"仍然显示 NEW。
+  if (cur === 'studio' && studioSub === 'album' && S.album.fresh.length){
+    var seenFresh = S.album.fresh.slice();
+    setTimeout(function(){
+      S.album.fresh = S.album.fresh.filter(function(id){ return seenFresh.indexOf(id) < 0; });
+      save();
+    }, 900);
+  }
+}
+
+/* ---------------------------------------------------------------
+   6. 首页
+   --------------------------------------------------------------- */
+function todayPhoto(){
+  // 每天固定一张"此刻"的照片，未解锁也能看（状态是公开的）
+  return PHOTOS[hash(today()) % PHOTOS.length];
+}
+function todayTopic(){
+  return TOPICS[hash(today() + 'topic') % TOPICS.length];
+}
+function topicNo(){ return (hash(today() + 'topic') % TOPICS.length) + 1; }
+
+function viewHome(){
+  var ph = todayPhoto();
+  var st = pick(STATUS[ph.cat] || STATUS.sleep);
+  var d = DEPT_BY_ID[P.dept];
+  var voted = votedOpt();
+  var checkedIn = P.lastCheckIn === today();
+
+  var h = syncNote();
+  h += '<div class="status-card">';
+  h +=   '<div class="status-photo">';
+  h +=     '<img src="assets/' + ph.id + '.jpg" alt="土豆此刻">';
+  h +=     '<div class="live">实时状态</div>';
+  h +=     '<div class="rr">' + ph.r + '</div>';
+  h +=   '</div>';
+  h +=   '<div class="status-body">';
+  h +=     '<div class="st-title">此刻：' + st[0] + '</div>';
+  h +=     '<div class="st-loc">📍 ' + st[1] + ' · ' + nowHM() + ' 更新</div>';
+  h +=     '<div class="st-tags">';
+  h +=       '<span class="pill moss">' + d.n + '</span>';
+  stTags().forEach(function(t){
+    h += '<span class="pill' + (t.cls ? ' ' + t.cls : '') + '">' + t.txt + '</span>';
+  });
+  h +=     '</div>';
+  h +=   '</div>';
+  h += '</div>';
+
+  // 签到
+  h += '<div class="card" style="margin-top:11px;display:flex;align-items:center;gap:13px">';
+  h +=   '<div style="flex:1;min-width:0">';
+  h +=     '<div style="font-size:14px;font-weight:800">' + (checkedIn ? '今天已打卡' : '今天还没打卡') + '</div>';
+  h +=     '<div class="tiny" style="margin-top:3px">连续 ' + P.streak + ' 天 · ' + (P.streak >= 6 ? '再签 1 天解锁一张未公开照片' : '连续 7 天解锁未公开照片') + '</div>';
+  h +=   '</div>';
+  h +=   '<button class="btn sm ' + (checkedIn ? 'ghost' : 'amber') + '" data-act="checkin" ' + (checkedIn ? 'disabled' : '') + '>' + (checkedIn ? '已签到' : '签到 +10') + '</button>';
+  h += '</div>';
+
+  // 今日议题
+  h += '<div class="topic" style="margin-top:11px" id="topicBox">' + topicBlockHTML(voted) + '</div>';
+
+  // 快捷四宫格
+  h += '<div class="sec-t"><span>快捷</span></div>';
+  h += '<div class="quick">';
+  h +=   '<button data-act="go" data-tab="cat"><i>🐾</i><span>撸猫</span></button>';
+  h +=   '<button data-act="go" data-tab="cat" data-feed="1"><i>🍚</i><span>投喂</span></button>';
+  h +=   '<button data-act="go" data-tab="studio" data-sub="album"><i>🎴</i><span>图鉴</span></button>';
+  h +=   '<button data-act="go" data-tab="studio" data-sub="meme"><i>📸</i><span>表情包</span></button>';
+  h += '</div>';
+
+  // 公告流
+  h += '<div class="sec-t"><span>校长办公室 · 最近</span><span class="more" data-act="go" data-tab="dept" data-dept="office">全部 ›</span></div>';
+  feedOf('office').slice(0,2).forEach(function(p){ h += postHTML(p, 'office'); });
+
+  return h;
+}
+
+function nowHM(){
+  var d = new Date();
+  return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+
+// 投票结果的"演示占比"：同一天同一题固定，保证每次打开一致。
+// 真实票数与演示票数的分流在 voteCounts()，这里只负责把票数换算成百分比。
+function topicOptHTML(label, i, voted, pcts){
+  var isVoted = (voted !== null && voted !== undefined);
+  var picked = isVoted && i === voted;
+  var h = '<button class="opt' + (picked ? ' picked' : '') + '" data-act="vote" data-i="' + i + '"';
+  if (isVoted) h += ' disabled';
+  h += '>';
+  h += '<span class="fill" style="width:' + (isVoted ? pcts[i] : 0) + '%"></span>';
+  h += '<span class="lbl"><span>' + esc(label) + '</span>';
+  if (isVoted) h += '<span class="pct">' + pcts[i] + '%</span>';
+  h += '</span></button>';
+  return h;
+}
+// 一次算出整题的结果。返回 total 是为了在界面上写"共 N 人参与"，
+// 顺便让"百分比确实基于 N 张票"这件事可以被直接看到。
+function topicOptsHTML(voted){
+  var opts = todayTopic()[1];
+  var counts = voteCounts(opts.length);
+  var pcts = pctOf(counts);
+  var isVoted = (voted !== null && voted !== undefined);
+  var total = 0, i;
+  for (i = 0; i < counts.length; i++) total += counts[i];
+  var h = '';
+  for (i = 0; i < opts.length; i++) h += topicOptHTML(opts[i], i, voted, pcts);
+  return { html: h, total: isVoted ? total : 0 };
+}
+
+function doVote(i){
+  if (votedOpt() !== null){ toast('今天已经投过了'); return; }
+  // 先写本地，界面立刻有反应；服务端失败再回滚 —— 不让用户对着转圈干等
+  S.votes[today()] = i;
+  save();
+  paintTopic();
+  addCoin(8, '投票 +8 鱼干');
+  if (!SHARED) return;
+  rpc('jzca_vote', { p_code: SHARE.code, p_uid: UID, p_day: today(), p_opt: i })
+    .then(function(ok){
+      if (ok === false){
+        // 服务端说今天已经投过（多半是换了手机、或清了缓存）。
+        // 这种时候要相信服务端，并把本机这一票对齐过去，否则两台设备显示不一致。
+        toast('今天已经投过了，正在同步你那台设备上的票');
+        return pullVotes();
+      }
+      // 自己那一票要计入统计，否则"共 N 人参与"永远少一个人
+      if (remote.votes) remote.votes.push(i);
+      return remote.votes ? null : pullVotes();
+    })
+    .then(function(){ paintTopic(); })
+    .catch(function(e){
+      // 回滚。宁可显示"没投过"，也不能让界面显示一个服务端并不存在的票
+      remote.err = String(e.message || e);
+      delete S.votes[today()];
+      save();
+      paintTopic();
+      toast('投票没发出去：' + (e.message || e));
+    });
+}
+// 整块议题（含标题、选项、结果脚注）。
+// 抽成独立函数是为了让"投票之后只重画这一块"成为可能 ——
+// 只改选项不更新脚注的话，"共 N 人参与"会一直停在投前那个数字。
+function topicBlockHTML(voted){
+  var topic = todayTopic();
+  var tv = topicOptsHTML(voted);
+  var h = '<div class="tp-k">每日议题 · 第 ' + topicNo() + ' 期</div>';
+  h += '<div class="tp-q">' + esc(topic[0]) + '</div>';
+  h += '<div class="tp-opts">' + tv.html + '</div>';
+  if (voted !== null){
+    h += '<div class="tiny" style="margin-top:10px">已投票 · '
+      + (SHARED ? '共 ' + tv.total + ' 人参与' : '结果仅为演示数据，本机模式不联网')
+      + '</div>';
+  }
+  return h;
+}
+// 只重画议题这一块，不整页重画 —— 整页重画会把滚动位置和动效一起打断
+function paintTopic(){
+  var box = $('#topicBox');
+  if (box) box.innerHTML = topicBlockHTML(votedOpt());
+}
+function addCoin(n, msg){
+  P.coins += n; save();
+  var el = $('#coinChip');
+  if (el) el.textContent = '🐟 ' + P.coins;
+  bumpCoin();
+  if (msg) toast(msg);
+}
+function spendCoin(n){
+  if (P.coins < n){ toast('鱼干不够，去签到或撸猫赚一点'); return false; }
+  P.coins -= n; save();
+  var el = $('#coinChip');
+  if (el) el.textContent = '🐟 ' + P.coins;
+  bumpCoin();
+  return true;
+}
+
+function doCheckin(){
+  var t = today();
+  if (P.lastCheckIn === t){ toast('今天已经签过了'); return; }
+  var y = new Date(Date.now() - 86400000);
+  var ymd = y.getFullYear() + '-' + pad2(y.getMonth()+1) + '-' + pad2(y.getDate());
+  P.streak = (P.lastCheckIn === ymd) ? P.streak + 1 : 1;
+  P.lastCheckIn = t;
+  P.coins += 10;
+  var extra = '';
+  if (P.streak % 7 === 0){
+    var lk = lockedList();
+    if (lk.length){
+      var got = lk[rint(lk.length)];
+      unlock(got.id);
+      extra = ' · 解锁「' + got.n + '」';
+    }
+  }
+  save();
+  vibe(18);
+  render();
+  toast('签到成功 +10 鱼干 · 连续 ' + P.streak + ' 天' + extra);
+}
+
+/* ---------------------------------------------------------------
+   7. 帖子
+   --------------------------------------------------------------- */
+function postHTML(p, deptId){
+  var k = postKey(p, deptId);
+  var pid = (p.id != null) ? p.id : '';
+  var liked = likedOf(p, deptId);
+  var isUser = p.kind === 'user';
+  // 服务端帖子的赞数由服务端每次全量重算，直接信它；
+  // 预置演示帖没有服务端记录，只能在本机记录上叠加。
+  // 两者用同一个按钮，但计数口径必须分开写 —— 混在一起就会"自己点的赞算两次"。
+  var nLike = (SHARED && pid !== '') ? (p.lk || 0) : ((p.lk || 0) + (liked ? 1 : 0));
+  var nCmt = (pid !== '') ? (remote.ccount['p' + pid] || 0) : 0;
+
+  var h = '<div class="post">';
+  h += '<div class="post-h">';
+  h +=   '<div class="post-av">🐾</div>';
+  h +=   '<div style="flex:1;min-width:0"><div class="who">' + esc(p.w) + '</div><div class="when">' + esc(p.ago) + '</div></div>';
+  if (!isUser) h += '<span class="pill demo">演示数据</span>';
+  h += '</div>';
+  h += '<div class="post-t">' + esc(p.t) + '</div>';
+  h += '<div class="post-c">' + esc(p.c) + '</div>';
+  h += '<div class="post-f">';
+  h +=   '<button data-act="like" data-k="' + esc(k) + '" data-pid="' + pid + '" data-dept="' + esc(deptId) + '" class="' + (liked ? 'on' : '') + '">'
+       +     '附议 <span>' + nLike + '</span></button>';
+  h +=   '<button data-act="comment" data-pid="' + pid + '" data-dept="' + esc(deptId) + '">'
+       +     '评论' + (nCmt ? ' <span>' + nCmt + '</span>' : '') + '</button>';
+  h += '</div></div>';
+  return h;
+}
+function doLike(k, pid, deptId){
+  var was = S.liked.indexOf(k) >= 0;
+  if (was){
+    S.liked.splice(S.liked.indexOf(k), 1);
+  } else {
+    S.liked.push(k);
+    // 附议奖励只发一次：取消后再点不再发钱，否则来回切换就能无限刷鱼干
+    if (S.likePaid.indexOf(k) < 0){ S.likePaid.push(k); addCoin(1); }
+  }
+  save();
+  // 预置演示帖没有服务端记录，本机记账就够了
+  if (!SHARED || !pid){ render(); return; }
+  // 共享帖：服务端才是准的。乐观更新先跑，失败再翻回来
+  rpc('jzca_like', { p_code: SHARE.code, p_uid: UID, p_post_id: Number(pid) })
+    .then(function(n){
+      (remote.posts[deptId] || []).forEach(function(p){
+        if (String(p.id) === String(pid)) p.lk = n;
+      });
+      if (remote.mylikes){
+        var i = remote.mylikes.indexOf(k);
+        if (was && i >= 0) remote.mylikes.splice(i, 1);
+        if (!was && i < 0) remote.mylikes.push(k);
+      }
+      render();
+    })
+    .catch(function(e){
+      // 服务端没收下，就得把本机的乐观改动翻回来，
+      // 否则按钮会一直亮着、数字也一直多一个
+      remote.err = String(e.message || e);
+      var i = S.liked.indexOf(k);
+      if (was && i < 0) S.liked.push(k);
+      if (!was && i >= 0) S.liked.splice(i, 1);
+      save(); render();
+      toast('附议没发出去：' + (e.message || e));
+    });
+}
+
+/* --- 评论：列表在底部弹层里，不再占帖子高度 --- */
+var cmtState = { pid: null, dept: null, failed: false };
+
+function openComments(pid, deptId){
+  // 预置演示帖没有服务端 id，评论无处可挂。说清楚原因，别给一个点了没反应的按钮
+  if (!SHARED || !pid){ toast('这是预置演示内容，评论需要服务端，扫码进来的版本才有'); return; }
+  cmtState.pid = Number(pid);
+  cmtState.dept = deptId;
+  cmtState.failed = false;
+  openSheet(
+    '<div class="sheet-title">评论</div>'
+    + '<div class="sheet-sub" id="cmtSub">正在加载…</div>'
+    + '<div id="cmtList"></div>'
+    + '<div style="display:flex;gap:8px;margin-top:13px;align-items:flex-start">'
+    +   '<input class="txt" id="cmtInput" maxlength="200" placeholder="说点什么，200 字以内">'
+    +   '<button class="btn sm" id="cmtSend" style="flex:0 0 72px">发送</button>'
+    + '</div>'
+  );
+  var send = $('#cmtSend');
+  if (send) send.addEventListener('click', sendComment);
+  var inp = $('#cmtInput');
+  if (inp) inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') sendComment(); });
+  paintComments();                                     // 有缓存就先画，没缓存会显示"正在加载…"
+  pullComments(cmtState.pid).then(function(){
+    // 拉失败时 pullComments 不会往缓存里写，所以"缓存还是空的"就等价于"这次没拉到"。
+    // 必须把这两种状态分开：一直转圈"正在加载…"和"加载失败"在用户眼里是两回事，
+    // 前者会让人一直等下去。
+    if (!remote.comments[cmtState.pid]) cmtState.failed = true;
+    if ($('#cmtList')) paintComments();                // 弹层可能已被关掉，先确认节点还在
+  });
+}
+function paintComments(){
+  var list = $('#cmtList'), sub = $('#cmtSub');
+  var rows = remote.comments[cmtState.pid];
+  if (!rows){
+    if (sub) sub.textContent = cmtState.failed ? '没拉到' : '正在加载…';
+    if (list && cmtState.failed){
+      list.innerHTML = '<div class="tiny" style="padding:14px 0">连不上共享服务，暂时看不到评论。<br>网络好了再点进来一次。</div>';
+    }
+    return;
+  }
+  if (sub) sub.textContent = rows.length ? ('共 ' + rows.length + ' 条') : '还没有人说话';
+  if (!list) return;
+  if (!rows.length){
+    list.innerHTML = '<div class="tiny" style="padding:14px 0">第一条留给你。</div>';
+    return;
+  }
+  list.innerHTML = rows.map(function(c){
+    return '<div class="cmt">'
+      + '<div class="cmt-h"><b>' + esc(c.author) + '</b><span>' + esc(agoText(c.created_at)) + '</span></div>'
+      + '<div class="cmt-b">' + esc(c.body) + '</div>'
+      + '</div>';
+  }).join('');
+}
+function sendComment(){
+  var inp = $('#cmtInput'), btn = $('#cmtSend');
+  var v = inp ? String(inp.value || '').trim() : '';
+  if (!v){ toast('先写点什么'); return; }
+  if (v.length > 200){ toast('太长了，200 字以内'); return; }
+  if (btn){ btn.disabled = true; btn.textContent = '发送中'; }
+  // 先清空输入框：成功了还留着原文，用户会以为没发出去又发一遍
+  if (inp) inp.value = '';
+  rpc('jzca_comment', {
+    p_code: SHARE.code, p_uid: UID, p_author: displayName(),
+    p_post_id: cmtState.pid, p_body: v
+  })
+    .then(function(){ return pullComments(cmtState.pid); })
+    .then(function(){
+      if (btn){ btn.disabled = false; btn.textContent = '发送'; }
+      paintComments();
+      setCommentCount(cmtState.pid, (remote.comments[cmtState.pid] || []).length);
+      toast('说完了');
+    })
+    .catch(function(e){
+      if (btn){ btn.disabled = false; btn.textContent = '发送'; }
+      // 失败要把内容还给用户，不然等于让他重打一遍
+      if (inp) inp.value = v;
+      remote.err = String(e.message || e);
+      toast('没发出去：' + (e.message || e));
+    });
+}
+// 只改那一颗按钮上的数字，不整页重画 —— 用户还在弹层里，重画会让列表闪一下
+function setCommentCount(pid, n){
+  remote.ccount['p' + pid] = n;
+  $$('.post-f [data-act="comment"]').forEach(function(b){
+    if (String(b.dataset.pid) === String(pid)){
+      b.innerHTML = '评论' + (n ? ' <span>' + n + '</span>' : '');
+    }
+  });
+}
+
+/* --- 发帖 --- */
+function openCompose(deptId){
+  if (!SHARED){
+    toast('本机模式发不了帖；扫码进来的版本才能大家一起看');
+    return;
+  }
+  var d = DEPT_BY_ID[deptId];
+  openSheet(
+    '<div class="sheet-title">在「' + d.n + '」发帖</div>'
+    + '<div class="sheet-sub">以 ' + esc(displayName()) + ' 的名义发出，所有人都看得到</div>'
+    + '<input class="txt" id="npTitle" maxlength="40" placeholder="标题，40 字以内">'
+    + '<div style="height:9px"></div>'
+    + '<textarea class="txt" id="npBody" maxlength="800" rows="5" placeholder="正文（可以空着）"></textarea>'
+    + '<div style="height:13px"></div>'
+    + '<button class="btn" id="npSend">发布</button>'
+  );
+  var s = $('#npSend');
+  if (s) s.addEventListener('click', function(){ sendPost(deptId); });
+}
+function sendPost(deptId){
+  var t = $('#npTitle'), b = $('#npBody'), btn = $('#npSend');
+  var title = t ? String(t.value || '').trim() : '';
+  var body = b ? String(b.value || '').trim() : '';
+  if (!title){ toast('标题不能空着'); return; }
+  if (btn){ btn.disabled = true; btn.textContent = '发布中'; }
+  rpc('jzca_post', {
+    p_code: SHARE.code, p_uid: UID, p_author: displayName(),
+    p_dept: deptId, p_title: title, p_body: body
+  })
+    .then(function(){ closeSheet(); return pullPosts(deptId); })
+    .then(function(){ render(); toast('发出去了'); })
+    .catch(function(e){
+      if (btn){ btn.disabled = false; btn.textContent = '发布'; }
+      remote.err = String(e.message || e);
+      toast('没发出去：' + (e.message || e));
+    });
+}
+
+/* ---------------------------------------------------------------
+   8. 部门
+   --------------------------------------------------------------- */
+function viewDepts(){
+  var h = '<div class="card" style="margin-bottom:14px;display:flex;align-items:center;gap:12px">';
+  h +=   '<div style="width:38px;height:38px;border-radius:50%;background:var(--moss-l);display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 38px">🎫</div>';
+  h +=   '<div style="flex:1;min-width:0;font-size:12.5px;color:var(--ink2);line-height:1.6">你在 <b style="color:var(--ink)">' + DEPT_BY_ID[P.dept].n + '</b>。部门可以随时调岗，但每个部门看到的风景不一样。</div>';
+  h += '</div>';
+  h += '<div class="depts">';
+  h += DEPTS.map(function(d){
+    var mine = d.id === P.dept;
+    var h2 = '<button class="dept' + (d.open ? '' : ' locked') + '" data-act="deptOpen" data-id="' + d.id + '">';
+    h2 += '<div class="bar" style="background:' + d.c + '"></div>';
+    if (mine) h2 += '<div class="ok">✓</div>';
+    h2 += '<div class="ic">' + d.ic + '</div>';
+    h2 += '<div class="nm">' + d.n + '</div>';
+    h2 += '<div class="rl">' + d.rl + '</div>';
+    h2 += '<div class="ft" style="color:' + (d.open ? d.c : 'var(--ink3)') + '">' + (d.open ? d.foot + ' ›' : d.foot) + '</div>';
+    h2 += '</button>';
+    return h2;
+  }).join('');
+  h += '</div>';
+  h += '<div class="tiny" style="margin-top:16px;text-align:center">'
+    + (SHARED
+        ? '点进任何一个部门都能发帖、评论，全画室看到的是同一份。'
+        : '本机模式：部门内容为预置演示。<br>扫码进入共享版才能发帖、评论。')
+    + '</div>';
+  return h;
+}
+
+function viewDeptDetail(id){
+  var d = DEPT_BY_ID[id];
+  if (!d.open){
+    return '<div class="card" style="text-align:center;padding:40px 22px">'
+      + '<div style="font-size:44px">🌙</div>'
+      + '<div style="font-size:17px;font-weight:800;margin-top:14px">天台还没开放</div>'
+      + '<div class="muted" style="margin-top:9px;line-height:1.75">匿名板块需要服务端才能真正做到匿名——<br>前端藏名字但后台留记录，那是假匿名。<br><br>'
+      + (SHARED
+          ? '服务端已经有了，但"发帖不留痕"要么做对、要么不做，所以先空着。'
+          : '这一块等到接入云端再做，不做错误承诺。')
+      + '</div>'
+      + '<button class="btn ghost" style="margin-top:20px" data-act="deptBack">返回部门列表</button>'
+      + '</div>';
+  }
+  var list = feedOf(id);
+  var mine = id === P.dept;
+  var h = syncNote();
+  h += '<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:13px">';
+  h +=   '<div style="width:40px;height:40px;border-radius:11px;background:' + d.c + '1F;display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 40px">' + d.ic + '</div>';
+  h +=   '<div style="flex:1;min-width:0">';
+  h +=     '<div style="font-size:15px;font-weight:800">' + d.n + '</div>';
+  h +=     '<div class="tiny" style="margin-top:2px">' + d.d + '</div>';
+  h +=   '</div>';
+  h += '</div>';
+  if (SHARED){
+    h += '<button class="btn post-new" data-act="postNew" data-dept="' + id + '">✏️ 在这里发个帖</button>';
+  }
+  if (!mine){
+    h += '<button class="btn ghost" style="margin-bottom:13px" data-act="changeDept" data-id="' + id + '">申请调岗到这里</button>';
+  } else {
+    h += '<div class="pill moss" style="margin-bottom:13px;display:inline-block">这是你的岗位</div>';
+  }
+  list.forEach(function(p){ h += postHTML(p, id); });
+  if (!list.length){
+    h += '<div class="card post-empty"><div class="muted">'
+      + (SHARED ? '这里还没有人说话。<br>第一条留给你。' : '这个部门还没有内容。')
+      + '</div></div>';
+  }
+  h += '<div class="tiny" style="margin-top:14px;text-align:center">'
+    + (SHARED
+        ? '内容来自共享服务，所有人看到的是同一份。'
+        : '本机模式：内容为预置演示，发帖与评论需要扫码进入共享版。')
+    + '</div>';
+  return h;
+}
+
+/* ---------------------------------------------------------------
+   9. 撸猫
+   --------------------------------------------------------------- */
+var catState = { photo: 't16', busy: false };
+var wantFeed = false;   // 从首页"投喂"快捷入口进来时置位，撸猫页挂载后脉冲提示投喂区
+
+function viewCat(){
+  var h = '<div class="cat-wrap">';
+  h += '<div class="cat-stage" id="catStage">';
+  h +=   '<img id="catImg" src="assets/' + catState.photo + '.jpg" alt="土豆">';
+  h += '</div>';
+  h += '<div class="cat-veil"></div>';
+  h += '<div class="cat-hud">';
+  h +=   '<div class="lv">好感度 Lv.' + P.level + ' · ' + levelName(P.level) + '</div>';
+  h +=   '<div class="aff-bar"><i id="affBar"></i></div>';
+  h += '</div>';
+  h += '<div class="drop-zone" id="dropZone"></div>';
+  h += '<div class="cat-hint" id="catHint">';
+  h +=   '<div class="ring">👆</div>';
+  h +=   '<div class="tx">戳它 · 长按撸背</div>';
+  h += '</div>';
+  h += '<div class="hold-ring" id="holdRing">';
+  h +=   '<svg width="96" height="96" viewBox="0 0 96 96">';
+  h +=     '<circle class="bgc" cx="48" cy="48" r="42" fill="none" stroke-width="5"/>';
+  h +=     '<circle class="fgc" id="holdArc" cx="48" cy="48" r="42" fill="none" stroke-width="5" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264"/>';
+  h +=   '</svg>';
+  h += '</div>';
+  h += '<div class="cat-say" id="catSay"></div>';
+  h += '<div class="cat-dock">';
+  h +=   '<div class="sayline" id="catLine">它眯着眼看了你一眼…</div>';
+  h +=   '<div class="feed-row">';
+  FEEDS.forEach(function(f){
+    h += '<button class="feed-btn" data-feed="' + f.id + '"><span class="fi">' + f.ic + '</span><span class="fn">' + f.n + '</span><span class="fc">−' + f.cost + ' 鱼干</span></button>';
+  });
+  h +=   '</div>';
+  h += '</div>';
+  h += '</div>';
+  return h;
+}
+
+function mountCat(){
+  var stage = $('#catStage'), img = $('#catImg');
+  var affBar = $('#affBar');
+  var hint = $('#catHint'), holdRing = $('#holdRing'), holdArc = $('#holdArc');
+  var sayEl = $('#catSay'), lineEl = $('#catLine'), zone = $('#dropZone');
+  if (!stage) return;
+
+  setTimeout(function(){ if (affBar) affBar.style.width = Math.round(S.affection / AFF_MAX * 100) + '%'; }, 60);
+
+  // 由首页"投喂"快捷入口进来：脉冲提示投喂区，并把操作说清楚
+  if (wantFeed){
+    wantFeed = false;
+    var feedRow = $('.feed-row');
+    if (feedRow){
+      feedRow.classList.add('attn');
+      setTimeout(function(){ feedRow.classList.remove('attn'); }, 3200);
+    }
+    if (lineEl) lineEl.textContent = '按住一样吃的，拖到它面前再松手';
+    if (hint) hint.classList.add('gone');
+  }
+
+  function say(txt){
+    sayEl.innerHTML = '<span>' + esc(txt) + '</span>';
+    setTimeout(function(){ if (sayEl.firstChild) sayEl.innerHTML = ''; }, 2400);
+  }
+  function fx(emoji, x, y){
+    var e = document.createElement('div');
+    e.className = 'emoji-fx';
+    e.textContent = emoji;
+    e.style.left = x + 'px';
+    e.style.top = y + 'px';
+    stage.appendChild(e);
+    setTimeout(function(){ e.remove(); }, 1050);
+  }
+  function swapPhoto(id){
+    if (!PHOTO_BY_ID[id]) return;
+    catState.photo = id;
+    img.classList.add('swap');
+    setTimeout(function(){
+      img.src = 'assets/' + id + '.jpg';
+      img.onload = function(){ img.classList.remove('swap'); };
+      setTimeout(function(){ img.classList.remove('swap'); }, 320);
+    }, 150);
+  }
+  function bumped(delta){
+    S.affection = Math.max(0, Math.min(AFF_MAX, S.affection + delta));
+    var up = recalcLevel();
+    save();
+    // 进度条与"我的"页的文字共用 AFF_MAX 这一个分母，两处永远同比例
+    if (affBar) affBar.style.width = Math.round(S.affection / AFF_MAX * 100) + '%';
+    if (up){
+      var hud = $('.cat-hud .lv');
+      if (hud) hud.textContent = '好感度 Lv.' + P.level + ' · ' + levelName(P.level);
+      toast('职级提升：' + levelName(P.level));
+    }
+  }
+
+  /* --- 戳：按区域分头部/身体/尾巴 --- */
+  var downT = 0, downX = 0, downY = 0, holding = false, holdStart = 0, holdRAF = 0;
+
+  function regionOf(y){
+    var h = stage.clientHeight;
+    if (y < h * 0.42) return 'head';
+    if (y < h * 0.72) return 'body';
+    return 'tail';
+  }
+  function doPoke(x, y){
+    if (catState.busy) return;
+    catState.busy = true;
+    setTimeout(function(){ catState.busy = false; }, 320);
+
+    var reg = regionOf(y);
+    var r = pick(POKE[reg]);
+    swapPhoto(r[1]);
+    say(r[0]);
+    fx(pick(['✨','💢','🐾','💤','❓']), x - 13, y - 20);
+    vibe(14);
+
+    // 每天戳的前 20 次给好感度，避免无限刷
+    var t = today();
+    if (P.pokesDate !== t){ P.pokesDate = t; P.pokesToday = 0; }
+    if (P.pokesToday < 20){
+      P.pokesToday++;
+      bumped(1);
+      if (lineEl) lineEl.textContent = '好感度 +1 · 今日剩余 ' + (20 - P.pokesToday) + ' 次';
+    } else {
+      if (lineEl) lineEl.textContent = '它今天被戳够了，不太想理你';
+    }
+    if (hint) hint.classList.add('gone');
+  }
+
+  stage.addEventListener('pointerdown', function(e){
+    downT = Date.now(); downX = e.clientX; downY = e.clientY;
+    holding = true; holdStart = Date.now();
+    var rect = stage.getBoundingClientRect();
+    var ly = e.clientY - rect.top;
+    holdRing.style.left = (e.clientX - rect.left) + 'px';
+    holdRing.style.top = ly + 'px';
+    holdRing.classList.add('on');
+    if (hint) hint.classList.add('gone');
+    cancelAnimationFrame(holdRAF);
+    (function tick(){
+      if (!holding) return;
+      var p = Math.min(1, (Date.now() - holdStart) / 1600);
+      holdArc.setAttribute('stroke-dashoffset', String(264 * (1 - p)));
+      if (p >= 1){ holding = false; holdRing.classList.remove('on'); purr(); return; }
+      holdRAF = requestAnimationFrame(tick);
+    })();
+  });
+  stage.addEventListener('pointerup', function(e){
+    holding = false;
+    cancelAnimationFrame(holdRAF);
+    holdRing.classList.remove('on');
+    holdArc.setAttribute('stroke-dashoffset', '264');
+    var moved = Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY);
+    if (Date.now() - downT < 420 && moved < 14){
+      var rect = stage.getBoundingClientRect();
+      doPoke(e.clientX - rect.left, e.clientY - rect.top);
+    }
+  });
+  stage.addEventListener('pointercancel', function(){
+    holding = false; cancelAnimationFrame(holdRAF); holdRing.classList.remove('on');
+  });
+  stage.addEventListener('pointerleave', function(){
+    holding = false; cancelAnimationFrame(holdRAF); holdRing.classList.remove('on');
+  });
+
+  function purr(){
+    if (Date.now() - S.pettedAt < 4000){ toast('它刚被撸过，让它歇一会'); return; }
+    S.pettedAt = Date.now();
+    bumped(3);
+    vibe([18, 40, 18]);
+    fx('🎵', stage.clientWidth/2 - 13, stage.clientHeight * 0.44);
+    say('咕噜咕噜……');
+    if (lineEl) lineEl.textContent = '它发出了咕噜声 · 好感度 +3';
+    swapPhoto(pick(['t12','t13','t05']));
+  }
+
+  /* --- 拖拽投喂 --- */
+  var drag = null, ghost = null;
+  $$('.feed-btn').forEach(function(btn){
+    btn.addEventListener('pointerdown', function(e){
+      e.preventDefault();
+      var f = FEEDS.filter(function(x){ return x.id === btn.dataset.feed; })[0];
+      if (!f) return;
+      if (P.coins < f.cost){ toast('鱼干不够，差 ' + (f.cost - P.coins) + ' 条'); return; }
+      btn.classList.add('dragging');
+      ghost = document.createElement('div');
+      ghost.className = 'ghost-feed';
+      ghost.textContent = f.ic;
+      ghost.style.left = e.clientX + 'px';
+      ghost.style.top = e.clientY + 'px';
+      document.body.appendChild(ghost);
+      drag = {f:f, btn:btn};
+      if (hint) hint.classList.add('gone');
+    });
+  });
+  document.addEventListener('pointermove', onDragMove);
+  document.addEventListener('pointerup', onDragEnd);
+
+  function onDragMove(e){
+    if (!drag || !ghost) return;
+    e.preventDefault();
+    ghost.style.left = e.clientX + 'px';
+    ghost.style.top = e.clientY + 'px';
+    var r = stage.getBoundingClientRect();
+    var cx = r.left + r.width/2, cy = r.top + r.height * 0.38;
+    var dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+    zone.classList.toggle('near', dist < 118);
+  }
+  function onDragEnd(e){
+    if (!drag || !ghost) return;
+    var r = stage.getBoundingClientRect();
+    var cx = r.left + r.width/2, cy = r.top + r.height * 0.38;
+    var dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+    var f = drag.f;
+    drag.btn.classList.remove('dragging');
+    ghost.remove(); ghost = null;
+    zone.classList.remove('near');
+    document.removeEventListener('pointermove', onDragMove);
+    document.removeEventListener('pointerup', onDragEnd);
+    drag = null;
+
+    if (dist < 118){
+      if (!spendCoin(f.cost)) return;
+      S.feedings.push({t: Date.now(), item: f.n});
+      bumped(2);
+      save();
+      vibe([12,30,12]);
+      fx(f.ic, cx - r.left - 13, cy - r.top - 10);
+      var s = pick(f.say);
+      say(s);
+      if (lineEl) lineEl.textContent = f.n + ' 投喂成功 · −' + f.cost + ' 鱼干';
+      swapPhoto(pick(['t16','t13','t12','t07']));
+    } else {
+      toast('它没接住，东西掉地上了');
+      if (lineEl) lineEl.textContent = '投喂失败 · 鱼干未扣除';
+    }
+  }
+}
+
+/* ---------------------------------------------------------------
+   10. 剪辑室
+   --------------------------------------------------------------- */
+function viewStudio(){
+  var h = '<div class="seg">';
+  h += '<button data-act="sub" data-sub="meme" class="' + (studioSub === 'meme' ? 'on' : '') + '">表情包工厂</button>';
+  h += '<button data-act="sub" data-sub="album" class="' + (studioSub === 'album' ? 'on' : '') + '">校长图鉴</button>';
+  h += '</div>';
+  h += (studioSub === 'meme') ? viewMeme() : viewAlbum();
+  return h;
+}
+
+var meme = { photo: 't10', text: '已阅', pos: 'bottom' };
+
+function viewMeme(){
+  var h = '';
+  h += '<div class="card">';
+  h +=   '<div class="meme-stage" id="memeStage">';
+  h +=     '<img id="memeImg" src="assets/' + meme.photo + '.jpg" style="width:100%;height:100%;object-fit:cover" alt="">';
+  h +=     '<div class="meme-txt ' + meme.pos + '" id="memeTxt">' + esc(meme.text) + '</div>';
+  h +=   '</div>';
+  h +=   '<div class="tiny" style="margin-top:10px">选照片 → 加字 → 导出。生成后可长按图片保存到相册。</div>';
+  h += '</div>';
+
+  h += '<div class="sec-t"><span>选一张</span></div>';
+  h += '<div class="picker">';
+  PHOTOS.forEach(function(p){
+    h += '<button data-act="memePick" data-id="' + p.id + '" class="' + (p.id === meme.photo ? 'on' : '') + '"><img src="assets/' + p.id + '.jpg" alt=""></button>';
+  });
+  h += '</div>';
+
+  h += '<div class="sec-t"><span>文案</span></div>';
+  h += '<div class="chips">';
+  MEME_TEXTS.forEach(function(t){
+    h += '<button class="chip ' + (t === meme.text ? 'on' : '') + '" data-act="memeText" data-t="' + esc(t) + '">' + esc(t) + '</button>';
+  });
+  h += '</div>';
+  h += '<div style="display:flex;gap:8px;margin-top:11px">';
+  h +=   '<input class="txt" id="memeInput" maxlength="14" placeholder="也可以自己打，14 字以内" value="' + (MEME_TEXTS.indexOf(meme.text) < 0 ? esc(meme.text) : '') + '">';
+  h +=   '<button class="btn sm" data-act="memeApply" style="flex:0 0 auto">用这句</button>';
+  h += '</div>';
+
+  h += '<div class="sec-t"><span>文字位置</span></div>';
+  h += '<div class="seg" style="margin-bottom:0">';
+  h +=   '<button data-act="memePos" data-p="top" class="' + (meme.pos === 'top' ? 'on' : '') + '">放上面</button>';
+  h +=   '<button data-act="memePos" data-p="bottom" class="' + (meme.pos === 'bottom' ? 'on' : '') + '">放下面</button>';
+  h += '</div>';
+
+  h += '<button class="btn" style="margin-top:16px" data-act="memeMake">生成表情包 · −5 鱼干</button>';
+  h += '<div id="memeOut"></div>';
+  h += '<div class="tiny" style="margin-top:12px;text-align:center">已有 ' + S.memes + ' 张出图记录</div>';
+  return h;
+}
+
+// 表情包预览不需要重挂载：选图、改字只做局部 DOM 更新，避免整页重绘
+function syncMeme(){
+  var img = $('#memeImg'), txt = $('#memeTxt');
+  if (img) img.src = 'assets/' + meme.photo + '.jpg';
+  if (txt){ txt.textContent = meme.text; txt.className = 'meme-txt ' + meme.pos; }
+  $$('.picker button').forEach(function(b){ b.classList.toggle('on', b.dataset.id === meme.photo); });
+  $$('.chip').forEach(function(c){ c.classList.toggle('on', c.dataset.t === meme.text); });
+}
+
+function makeMeme(){
+  if (P.coins < 5){ toast('鱼干不够，去签到或撸猫赚一点'); return; }
+  var id = meme.photo, text = meme.text, pos = meme.pos;
+  var im = new Image();
+  im.onload = function(){
+    // 先确认底图真的加载出来了再扣钱：加载失败时不能白扣鱼干
+    if (!spendCoin(5)) return;
+    var W = 750, H = 1000;
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var ctx = cv.getContext('2d');
+    // cover 绘制
+    var s = Math.max(W / im.width, H / im.height);
+    var dw = im.width * s, dh = im.height * s;
+    ctx.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    // 文字：白字 + 黑描边
+    var size = Math.max(34, Math.min(76, Math.floor(W * 1.72 / Math.max(4, text.length))));
+    ctx.font = '900 ' + size + 'px "PingFang SC","Microsoft YaHei",system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(6, size * 0.16);
+    ctx.strokeStyle = '#000';
+    ctx.fillStyle = '#fff';
+    var y = (pos === 'top') ? size * 1.1 : H - size * 1.1;
+    ctx.strokeText(text, W / 2, y);
+    ctx.fillText(text, W / 2, y);
+    var url = cv.toDataURL('image/jpeg', 0.92);
+    S.memes++; save();
+    var out = $('#memeOut');
+    if (out){
+      out.innerHTML = '<div class="sec-t"><span>生成好了</span></div>'
+        + '<div class="card" style="text-align:center">'
+        + '<img src="' + url + '" style="border-radius:11px;margin:0 auto;max-height:340px;width:auto" alt="表情包">'
+        + '<div class="tiny" style="margin-top:10px">长按图片保存到相册 · 或点下面的按钮下载</div>'
+        + '<a class="btn ghost" style="margin-top:11px;text-decoration:none" href="' + url + '" download="jzca-' + id + '.jpg">下载图片</a>'
+        + '</div>';
+      out.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+    vibe(16);
+    toast('生成成功 · 已扣 5 鱼干');
+  };
+  im.onerror = function(){ toast('底图加载失败，换一张再试'); };
+  im.src = 'assets/' + id + '.jpg';
+}
+
+/* 网格 HTML 抽成独立函数，是因为"抽完一张只重画网格"需要它：
+   整页 render 会把下面那个"抽到了"的结果卡一起冲掉，用户就看不到自己抽到什么了。 */
+function albumGridHTML(){
+  var h = '';
+  cardPool().forEach(function(p){
+    var has = S.album.unlocked.indexOf(p.id) >= 0;
+    var isNew = S.album.fresh.indexOf(p.id) >= 0;
+    h += '<div class="alb' + (has ? '' : ' lock') + (isNew ? ' new' : '') + '">';
+    h +=   '<img src="' + esc(imgOf(p)) + '" alt="" loading="lazy">';
+    h +=   '<span class="rk ' + p.r.toLowerCase() + '">' + p.r + '</span>';
+    if (p.community) h += '<span class="up">投稿</span>';
+    if (!has) h += '<span class="lockmark">🔒</span>';
+    h +=   '<span class="nm">' + (has ? esc(p.n) : '未收集') + '</span>';
+    h += '</div>';
+  });
+  return h;
+}
+// 已收集必须从卡池里筛出来算，不能直接数 unlocked 的长度：
+// 卡池里的卡是会被删掉的（比如某张投稿被否了），直接数就会出现 18/17 这种分子大于分母的怪数
+function albumGot(pool){ return pool.filter(function(p){ return S.album.unlocked.indexOf(p.id) >= 0; }).length; }
+function albumProgressHTML(pool){
+  pool = pool || cardPool();
+  return albumGot(pool) + '<span style="font-size:15px;color:var(--ink3)"> / ' + pool.length + '</span>';
+}
+
+/* ---- 我的投稿：入口 / 进度 ---- */
+function viewCardSubmit(){
+  if (!SHARED) return '';
+  var h = '<div class="sec-t"><span>我的投稿</span></div>';
+  var mine = (remote.pending || []).filter(function(c){ return c.uid === UID; })[0];
+  if (mine){
+    return h + '<div class="card">' + pendCardHTML(mine, true)
+      + '<div class="tiny" style="margin-top:10px">同一时间只能有一张在审。等这张出了结果，才能再传下一张。</div>'
+      + '</div>';
+  }
+  if (P.level < CARD_UPLOAD_LEVEL){
+    var need = Math.max(0, LEVEL_NEED[CARD_UPLOAD_LEVEL - 1] - S.affection);
+    return h + '<div class="card"><div class="lk-line">'
+      + '<div class="lk-t">🔒 给卡池加一张照片</div>'
+      + '<div class="tiny">需要 Lv.' + CARD_UPLOAD_LEVEL + '（好感度 ' + LEVEL_NEED[CARD_UPLOAD_LEVEL - 1]
+      + '），你还差 <b>' + need + '</b> 点。撸猫、投喂、每天戳它都能涨。</div>'
+      + '</div></div>';
+  }
+  return h + '<div class="card"><button class="btn" data-act="cardNew">＋ 投稿一张猫片</button>'
+    + '<div class="tiny" style="margin-top:10px">传上去不会直接进卡池：先放到下面「待大家验证」，'
+    + '凑够 3 票赞成、且赞成占到六成，才会进卡池让所有人抽得到。</div></div>';
+}
+
+/* ---- 待大家验证 ---- */
+function pendCardHTML(c, mine){
+  var total = (c.yes || 0) + (c.no || 0);
+  var yesPct = total ? Math.round((c.yes || 0) / total * 100) : 0;
+  var h = '<div class="pend">';
+  h += '<img src="' + esc(c.img) + '" alt="" loading="lazy">';
+  h += '<div class="pend-b">';
+  h +=   '<div class="pn">' + esc(c.name) + (mine ? '<span class="mine">你传的</span>' : '') + '</div>';
+  h +=   '<div class="tiny">' + esc(c.author || '同事') + '</div>';
+  h +=   '<div class="bar-wrap"><i style="width:' + yesPct + '%"></i></div>';
+  h +=   '<div class="tiny">赞成 ' + (c.yes || 0) + ' · 反对 ' + (c.no || 0) + '（要 3 票赞成且占六成）</div>';
+  if (mine){
+    h += '<div class="tiny" style="margin-top:6px">自己的投稿不能自己投票 —— 等别人来定。</div>';
+  } else {
+    h += '<div class="vote-row">'
+      +  '<button class="btn sm ok" data-act="cardVote" data-id="' + c.id + '" data-yes="1">赞成</button>'
+      +  '<button class="btn sm ghost" data-act="cardVote" data-id="' + c.id + '" data-yes="0">反对</button>'
+      +  '</div>';
+  }
+  h += '</div></div>';
+  return h;
+}
+function viewPending(){
+  if (!SHARED) return '';
+  var list = remote.pending || [];
+  if (!list.length) return '';
+  var h = '<div class="sec-t"><span>待大家验证</span><span class="more">' + list.length + ' 张</span></div>';
+  list.forEach(function(c){ h += '<div class="card" style="margin-bottom:11px">' + pendCardHTML(c, c.uid === UID) + '</div>'; });
+  h += '<div class="tiny" style="margin-bottom:8px">审的标准只有一条：照片里只能有猫。'
+     + '出现真人、跟画室无关的东西、或者糊得看不出是猫，就点反对。反对票到 3 票这张就会被删掉，不留档。</div>';
+  return h;
+}
+
+function viewAlbum(){
+  var pool = cardPool();
+  var h = '';
+  h += syncNote();
+  h += '<div class="card">';
+  h +=   '<div class="alb-head">';
+  h +=     '<div><div class="alb-prog" id="albProg">' + albumProgressHTML(pool) + '</div>';
+  h +=     '<div class="tiny" style="margin-top:3px">已收集的校长照片</div></div>';
+  h +=     '<div class="alb-btns">';
+  h +=       '<button class="btn amber sm" data-act="draw">抽一张 · ' + DRAW_COST + '</button>';
+  if (SHARED){
+    var canBatch = P.level >= BATCH_DRAW_LEVEL;
+    h += '<button class="btn sm' + (canBatch ? '' : ' ghost') + '" data-act="drawBatch">十连 · '
+      + (DRAW_COST * BATCH_N) + (canBatch ? '' : '（Lv.' + BATCH_DRAW_LEVEL + '）') + '</button>';
+  }
+  h +=     '</div>';
+  h +=   '</div>';
+  h +=   '<div class="hr"></div>';
+  h +=   '<div class="tiny">SSR 4% · SR 16% · R 40% · N 40%。抽到重复的返还 ' + DUP_REFUND + ' 鱼干。'
+       + '卡池现共 ' + pool.length + ' 张，大家投稿通过的卡也在里面。</div>';
+  h += '</div>';
+  h += '<div id="drawOut"></div>';
+  h += viewCardSubmit();
+  h += viewPending();
+  h += '<div class="sec-t"><span>图鉴</span></div>';
+  h += '<div class="alb-grid" id="albGrid">' + albumGridHTML() + '</div>';
+  h += '<div class="tiny" style="margin-top:14px;text-align:center">解锁方式：签到（连续 7 天送 1 张）· 抽卡（'
+     + DRAW_COST + ' 鱼干 1 张）</div>';
+  return h;
+}
+
+// 抽完只重画进度和网格，不动 #drawOut —— 那里放着刚抽到的结果卡
+function paintAlbum(){
+  var pool = cardPool();
+  var grid = $('#albGrid'), prog = $('#albProg');
+  if (prog) prog.innerHTML = albumProgressHTML(pool);
+  if (grid) grid.innerHTML = albumGridHTML();
+}
+
+function rollRarity(){
+  var roll = Math.random() * 100, acc = 0, order = ['SSR', 'SR', 'R', 'N'];
+  for (var i = 0; i < order.length; i++){
+    acc += RARITY_W[order[i]];
+    if (roll < acc) return order[i];
+  }
+  return 'N';
+}
+// 抽一次。**从整个卡池抽**，不再只从"还没收集的"里面挑 ——
+// 用户要的"抽到重复返还三分之一"必须建立在"抽得到重复"这个前提上，
+// 原来的实现永远抽不到重复，这条规则就永远不会触发。
+// ⚠️ 这里**只改图鉴状态，不碰鱼干**。钱的进出统一由调用方结算：
+//    之前把返还写在函数里，十连那边又结算了一次，重复的每张退了两次 ——
+//    实测抓到的（十连应该退 20，实际退了 40）。钱的事只留一个记账口子。
+function drawOnce(){
+  var pool = cardPool();
+  if (!pool.length) return null;
+  var rar = rollRarity();
+  var cand = pool.filter(function(p){ return p.r === rar; });
+  if (!cand.length) cand = pool;
+  var got = pick(cand);
+  var dup = S.album.unlocked.indexOf(got.id) >= 0;
+  if (!dup) unlock(got.id);
+  return { card: got, dup: dup };
+}
+
+function paintDrawResult(list, cost, refund){
+  var out = $('#drawOut');
+  if (!out) return;
+  var news = list.filter(function(x){ return !x.dup; });
+  var dups = list.length - news.length;
+  var h = '';
+  if (list.length === 1){
+    var r = list[0];
+    h += '<div class="sec-t"><span>抽到了</span></div>';
+    h += '<div class="draw-card' + (r.dup ? ' dup' : '') + '">'
+      + '<img src="' + esc(imgOf(r.card)) + '" alt="">'
+      + '<div class="dc-b"><div class="r">' + r.card.r + (r.dup ? ' · 已经有了' : '') + '</div>'
+      + '<div class="n">' + esc(r.card.n) + '</div>'
+      + '<div class="d">' + (r.dup ? ('这张重复了，返还 ' + DUP_REFUND + ' 鱼干') : esc(r.card.d)) + '</div>'
+      + '</div></div>';
+  } else {
+    h += '<div class="sec-t"><span>十连结果</span></div>';
+    h += '<div class="card">';
+    h +=   '<div class="batch-sum">新收集 <b>' + news.length + '</b> 张 · 重复 <b>' + dups
+         + '</b> 张 · 返还 <b>' + refund + '</b> 鱼干</div>';
+    h +=   '<div class="batch-grid">';
+    list.forEach(function(x){
+      h += '<div class="bg-item' + (x.dup ? ' dup' : '') + '">'
+        + '<img src="' + esc(imgOf(x.card)) + '" alt="" loading="lazy">'
+        + '<span class="bg-r">' + x.card.r + '</span>'
+        + (x.dup ? '<span class="bg-dup">重复</span>' : '')
+        + '</div>';
+    });
+    h +=   '</div>';
+    h +=   '<div class="tiny" style="margin-top:10px">十连花了 ' + cost + ' 鱼干；重复的每张返 '
+         + DUP_REFUND + '，这次共返 ' + refund + '。</div>';
+    h += '</div>';
+  }
+  h += '<div style="height:14px"></div>';
+  out.innerHTML = h;
+}
+
+function drawCard(){
+  if (!cardPool().length){ toast('卡池是空的'); return; }
+  if (!spendCoin(DRAW_COST)) return;
+  var r = drawOnce();
+  if (!r){ P.coins += DRAW_COST; save(); toast('卡池是空的，钱退给你了'); return; }  // 兜底：别把钱吞了
+  // 重复返还三分之一。退款恒小于单抽成本，所以"反复抽重复刷鱼干"这条路不存在
+  var refund = r.dup ? DUP_REFUND : 0;
+  P.coins += refund;
+  S.draws++;
+  save();
+  vibe([10, 26, 10]);
+  paintDrawResult([r], DRAW_COST, refund);
+  paintAlbum();
+}
+
+function drawBatch(){
+  if (!SHARED){ toast('十连要在共享版里用'); return; }
+  if (P.level < BATCH_DRAW_LEVEL){
+    toast('Lv.' + BATCH_DRAW_LEVEL + ' 才能十连，你现在是 Lv.' + P.level);
+    return;
+  }
+  if (!cardPool().length){ toast('卡池是空的'); return; }
+  var cost = DRAW_COST * BATCH_N;
+  if (!spendCoin(cost)) return;
+  var list = [], i;
+  for (i = 0; i < BATCH_N; i++){ var r = drawOnce(); if (r) list.push(r); }
+  var dups = 0;
+  list.forEach(function(x){ if (x.dup) dups++; });
+  // 只有这里结算一次钱：没抽满的按单价退回，重复的每张退三分之一
+  var refund = (BATCH_N - list.length) * DRAW_COST + dups * DUP_REFUND;
+  P.coins += refund;
+  S.draws += list.length;
+  save();
+  vibe([10, 26, 10]);
+  paintDrawResult(list, cost, refund);
+  paintAlbum();
+}
+
+/* ---------------------------------------------------------------
+   11. 我的
+   --------------------------------------------------------------- */
+function viewMe(){
+  var d = DEPT_BY_ID[P.dept];
+  // 分母同样从卡池推导，和"我的"页上别处的口径保持一致
+  var pool = cardPool();
+  var total = pool.length, got = albumGot(pool);
+  var days = dayNo(today()) - dayNo(P.joinedAt) + 1;
+  var h = syncNote();
+  h += '<div class="idcard" id="idcard" data-act="idTap">';
+  h +=   '<div class="ic-top"><div class="l">JZCA 员工证</div><div class="r">STAFF ID</div></div>';
+  h +=   '<div class="ic-mid">';
+  h +=     '<img src="assets/t07.jpg" alt="证件照">';
+  h +=     '<div style="flex:1;min-width:0">';
+  h +=       '<div class="ic-name">' + esc(displayName()) + '</div>';
+  h +=       '<div class="ic-id">工号 ' + esc(P.staffId) + '</div>';
+  h +=       '<div class="ic-dept">' + d.n + ' · ' + levelName(P.level) + '</div>';
+  h +=       '<div class="ic-meta">入职第 ' + days + ' 天<br>累计投喂 ' + S.feedings.length + ' 次</div>';
+  h +=     '</div>';
+  h +=   '</div>';
+  h +=   '<div class="ic-stats">';
+  h +=     '<div><div class="v">Lv.' + P.level + '</div><div class="k">职级</div></div>';
+  h +=     '<div><div class="v">' + P.coins + '</div><div class="k">鱼干</div></div>';
+  h +=     '<div><div class="v">' + got + '/' + total + '</div><div class="k">图鉴</div></div>';
+  h +=   '</div>';
+  h +=   '<div class="barcode"></div>';
+  h +=   '<div class="ic-code">' + esc(P.staffId.replace(/-/g,' ')) + '</div>';
+  h +=   '<div class="ic-foot">';
+  h +=     '<div class="ic-note">本证仅限画室内使用<br>遗失请找姜校长补办</div>';
+  h +=     '<div class="stamp">姜校长<br>办公室</div>';
+  h +=   '</div>';
+  h += '</div>';
+  h += '<div class="tiny" style="margin-top:12px;text-align:center">' + (P.exportClicks > 0 && P.exportClicks < 5 ? '（还有 ' + (5 - P.exportClicks) + ' 下）' : '工牌可以截图保存，也可以分享给别人') + '</div>';
+
+  h += '<div class="sec-t"><span>数据</span></div>';
+  h += '<div class="card" style="padding:6px 16px">';
+  h +=   row('好感度', S.affection + ' / ' + AFF_MAX, '撸猫、投喂可以提升');
+  h +=   row('连续签到', P.streak + ' 天', '断签会重新计算');
+  h +=   row('投喂次数', S.feedings.length + ' 次', '累计');
+  h +=   row('表情包出图', S.memes + ' 张', '在剪辑室生成');
+  h +=   row('抽卡次数', S.draws + ' 次', '每次 30 鱼干');
+  h += '</div>';
+
+  h += viewRank();
+
+  h += '<div class="sec-t"><span>设置</span></div>';
+  h += '<div class="card" style="padding:6px 16px">';
+  h +=   '<div class="row"><div><div class="rl">改个署名</div><div class="rd">不填就用「员工 + 工牌尾号」代替</div></div>'
+       + '<button class="btn ghost sm" data-act="rename">修改</button></div>';
+  h +=   '<div class="row"><div><div class="rl">申请调岗</div><div class="rd">当前在 ' + d.n + '</div></div>'
+       + '<button class="btn ghost sm" data-act="reassign">换部门</button></div>';
+  h +=   '<div class="row"><div><div class="rl">减少动效</div><div class="rd">低端机上更流畅</div></div>'
+       + '<div class="sw ' + (S.settings.reduceMotion ? 'on' : '') + '" data-act="toggleMotion"></div></div>';
+  h += '</div>';
+
+  h += '<div class="card" style="margin-top:14px;background:#F1EFE9;border-style:dashed">';
+  h +=   '<div style="font-size:12.5px;font-weight:700;margin-bottom:6px">关于这个版本</div>';
+  h +=   '<div class="tiny">'
+    + (SHARED
+        ? '共享版：投票、帖子、评论、排行榜都在同一个服务端上，所有人看到的是同一份。<br>'
+          + '但你的鱼干、图鉴进度、连签天数仍然只存在这台手机上 —— 那些是你自己的，别人看不到。'
+        : '本机版：所有数据都存在你这台手机上，没有服务器，所以发帖、评论、天台都还没有真实功能。<br>'
+          + '带"演示数据"标记的内容是刻意保留的，不想让你误以为真的有人在用。')
+    + '</div>';
+  h += '</div>';
+  return h;
+}
+
+// 排行榜。共享模式下是全画室的榜；本机模式只有你自己，那就直说"凑不出第二个人"，
+// 而不是造几个假名字来撑场面。
+function viewRank(){
+  var h = '<div class="sec-t"><span>好感度排行</span></div>';
+  if (!SHARED){
+    return h + '<div class="card"><div class="muted" style="font-size:13px;line-height:1.78">'
+      + '本机模式没有服务端，排行榜上凑不出第二个人。<br>'
+      + '扫码进入共享版以后，这里会显示全画室的好感度排名。</div></div>';
+  }
+  var rows = remote.board;
+  if (!rows) return h + '<div class="card"><div class="tiny" style="padding:6px 0">正在加载…</div></div>';
+  if (!rows.length){
+    return h + '<div class="card"><div class="muted" style="font-size:13px">还没有人上来过。撸两下猫就能上榜。</div></div>';
+  }
+
+  var TOP = 10, myIdx = -1, i;
+  for (i = 0; i < rows.length; i++){ if (rows[i].uid === UID){ myIdx = i; break; } }
+
+  function rankHTML(r, idx){
+    var me = (r.uid === UID);
+    var dep = DEPT_BY_ID[r.dept] ? DEPT_BY_ID[r.dept].n : '';
+    return '<div class="rank">'
+      + '<div class="no' + (idx < 3 ? ' top' : '') + '">' + (idx + 1) + '</div>'
+      + '<div class="nm' + (me ? ' me' : '') + '">' + esc(r.nickname || '匿名员工') + (me ? '（你）' : '')
+      +   '<div class="sub">' + esc(dep) + ' · Lv.' + (r.level || 1) + '</div></div>'
+      + '<div class="sc">' + (r.affection || 0) + '</div>'
+      + '</div>';
+  }
+
+  var body = rows.slice(0, TOP).map(rankHTML).join('');
+  // 我不在前十也要看到自己 —— 排行榜的意义是知道自己排第几，不是只看别人
+  if (myIdx >= TOP) body += '<div class="hr"></div>' + rankHTML(rows[myIdx], myIdx);
+
+  return h + '<div class="card" style="padding:6px 16px">' + body + '</div>'
+    + '<div class="tiny" style="margin-top:9px">按好感度排。好感度靠撸猫、投喂和每天戳它积累。</div>';
+}
+function row(l, v, d){
+  return '<div class="row"><div><div class="rl">' + l + '</div>' + (d ? '<div class="rd">' + d + '</div>' : '') + '</div><div class="rv">' + v + '</div></div>';
+}
+
+function idTap(){
+  P.exportClicks++;
+  save();
+  if (P.exportClicks >= 5){
+    openSheet(
+      '<div class="sheet-title">数据管理</div>'
+      + '<div class="sheet-sub">这里可以把你手机上攒的所有数据导出成一个文件，或者从文件恢复。换手机、清缓存前建议先导出。</div>'
+      + '<button class="btn" id="doExport">导出数据（JSON）</button>'
+      + '<div style="height:9px"></div>'
+      + '<button class="btn ghost" id="doImport">从文件恢复</button>'
+      + '<div style="height:14px"></div>'
+      + '<div class="tiny">导出内容包括：工牌信息、图鉴进度、签到记录、鱼干、投票记录。不含任何照片文件。</div>'
+    );
+    setTimeout(function(){
+      var e = $('#doExport'), i = $('#doImport');
+      if (e) e.addEventListener('click', doExport);
+      if (i) i.addEventListener('click', doImport);
+    }, 30);
+  } else {
+    toast('再点 ' + (5 - P.exportClicks) + ' 下');
+  }
+}
+function doExport(){
+  var data = { app:'jzca', version:1, exportedAt:new Date().toISOString(), profile:P, state:S };
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'jzca-backup-' + today() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 3000);
+  toast('已导出，请保存好这个文件');
+}
+function doImport(){
+  var inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.json,application/json';
+  inp.style.display = 'none';
+  inp.onchange = function(){
+    var f = inp.files[0];
+    inp.remove();
+    if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function(){
+      try {
+        var d = JSON.parse(fr.result);
+        if (!d || d.app !== 'jzca') throw new Error('bad');
+        // 备份可能来自旧版本或被手工改过，一律过归一化补齐字段，避免残缺数据把页面搞崩
+        P = normalizeProfile(d.profile);
+        S = normalizeState(d.state);
+        save(); closeSheet(); render();
+        toast('恢复成功');
+      } catch(e){ toast('这个文件不是本站导出的备份'); }
+    };
+    fr.readAsText(f);
+  };
+  // 挂在 DOM 上再 click：部分浏览器对内联（脱离文档）的 file input 不弹选择框
+  document.body.appendChild(inp);
+  inp.click();
+}
+
+function rename(){
+  openSheet(
+    '<div class="sheet-title">改个署名</div>'
+    + '<div class="sheet-sub">会显示在工牌上，也是同事在共享区看到的名字。不填就用「员工 + 工牌尾号」。</div>'
+    + '<input class="txt" id="nameInput" maxlength="8" placeholder="最多 8 个字" value="' + esc(P.nickname) + '">'
+    + '<div style="height:12px"></div>'
+    + '<button class="btn" id="nameOk">保存</button>'
+  );
+  setTimeout(function(){
+    var i = $('#nameInput'), b = $('#nameOk');
+    if (i) i.focus();
+    if (b) b.addEventListener('click', function(){
+      P.nickname = ($('#nameInput').value || '').trim();
+      save(); closeSheet(); render(); toast('已保存');
+    });
+  }, 30);
+}
+function reassign(){
+  var h = '<div class="sheet-title">申请调岗</div><div class="sheet-sub">换一个部门，看到的内容不一样。</div>';
+  DEPTS.forEach(function(d){
+    if (!d.open) return;
+    h += '<button class="row" data-act="setDept" data-id="' + d.id + '">'
+      + '<div style="display:flex;align-items:center;gap:11px">'
+      + '<span style="font-size:19px">' + d.ic + '</span>'
+      + '<span><span class="rl" style="display:block">' + d.n + '</span><span class="rd">' + d.rl + '</span></span>'
+      + '</div>'
+      + '<span class="rv">' + (d.id === P.dept ? '当前' : '选这个') + '</span></button>';
+  });
+  openSheet(h);
+}
+
+/* ---------------------------------------------------------------
+   11b. 卡池投稿与群众审核
+   --------------------------------------------------------------- */
+var cardDraft = null;   // { data: base64（不含 data: 前缀）, preview: dataURL }
+
+// 把用户选的图先压到最长边 1000、JPEG q82 再传。
+// 手机原图 3~8MB，直接传又慢又占服务器 —— 而且压缩在浏览器里做，
+// 不用把大图先传上来再让服务端处理。
+function compressImage(img){
+  var MAX = 1000;
+  var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  if (!w || !h) return null;
+  var sc = Math.min(1, MAX / Math.max(w, h));
+  var cw = Math.max(1, Math.round(w * sc)), ch = Math.max(1, Math.round(h * sc));
+  var c = document.createElement('canvas');
+  c.width = cw; c.height = ch;
+  c.getContext('2d').drawImage(img, 0, 0, cw, ch);
+  try { return c.toDataURL('image/jpeg', 0.82); } catch (e) { return null; }
+}
+
+function openCardSubmit(){
+  if (!SHARED){ toast('本机模式不能投稿，扫码进来的版本才行'); return; }
+  if (P.level < CARD_UPLOAD_LEVEL){
+    toast('要到 Lv.' + CARD_UPLOAD_LEVEL + ' 才能投稿');
+    return;
+  }
+  if ((remote.pending || []).some(function(c){ return c.uid === UID; })){
+    toast('你上一张还在等投票');
+    return;
+  }
+  // 不加 capture，让用户自己选用相机拍还是从相册挑
+  var inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = 'image/*';
+  inp.style.display = 'none';
+  inp.onchange = function(){
+    var f = inp.files && inp.files[0];
+    inp.remove();
+    if (f) readCardFile(f);
+  };
+  document.body.appendChild(inp);
+  inp.click();
+}
+
+function readCardFile(file){
+  // 用例：用户挑了个"改过扩展名的东西"或者 HEIC。
+  // 这里先粗筛一道，真正的把关在服务端（看文件头），两边都做才拦得住。
+  if (String(file.type || '').indexOf('image/') !== 0 && !/\.(jpe?g|png|webp)$/i.test(file.name || '')){
+    toast('这个不是图片文件');
+    return;
+  }
+  var fr = new FileReader();
+  fr.onerror = function(){ toast('读这个文件失败了，换一张试试'); };
+  fr.onload = function(){
+    var img = new Image();
+    img.onerror = function(){ toast('这张图打不开（可能是 HEIC 或文件坏了），可以先截图再传'); };
+    img.onload = function(){
+      var url = compressImage(img);
+      if (!url){ toast('这张图处理不了，换一张试试'); return; }
+      cardDraft = { data: url.split(',')[1], preview: url };
+      openSheet(
+        '<div class="sheet-title">投稿一张猫片</div>'
+        + '<div class="sheet-sub">传上去先进入「待大家验证」，不是马上进卡池。</div>'
+        + '<img class="draft" src="' + esc(url) + '" alt="">'
+        + '<input class="txt" id="cardName" maxlength="12" placeholder="给它起个名字，12 字以内">'
+        + '<div style="height:12px"></div>'
+        + '<button class="btn" id="cardSend">提交，等大家投票</button>'
+        + '<div class="tiny" style="margin-top:11px">只收猫的照片。出现真人、跟画室无关的东西，'
+        + '会被大家投掉 —— 投掉之后这张图会从服务器删掉，不留档。</div>'
+      );
+      var b = $('#cardSend');
+      if (b) b.addEventListener('click', sendCardSubmit);
+      var n = $('#cardName');
+      if (n) n.focus();
+    };
+    img.src = fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+
+function sendCardSubmit(){
+  if (!cardDraft){ toast('先选一张图'); return; }
+  var el = $('#cardName');
+  var name = el ? String(el.value || '').trim() : '';
+  if (!name){ toast('给它起个名字'); return; }
+  if (name.length > 12){ toast('名字最多 12 个字'); return; }
+  var btn = $('#cardSend');
+  if (btn){ btn.disabled = true; btn.textContent = '上传中…'; }
+  rpc('jzca_card_submit', {
+    p_code: SHARE.code, p_uid: UID, p_author: displayName(),
+    p_name: name, p_mime: 'image/jpeg', p_data: cardDraft.data
+  })
+    .then(function(){
+      cardDraft = null;
+      closeSheet();
+      return pullCards();
+    })
+    .then(function(){ render(); toast('提交好了，等大家的票'); })
+    .catch(function(e){
+      if (btn){ btn.disabled = false; btn.textContent = '提交，等大家投票'; }
+      remote.err = String(e.message || e);
+      toast('没传上去：' + (e.message || e));
+    });
+}
+
+function cardVote(id, yes){
+  var btn = $('[data-act="cardVote"][data-id="' + id + '"][data-yes="' + (yes ? 1 : 0) + '"]');
+  if (btn){ btn.disabled = true; }
+  rpc('jzca_card_vote', { p_code: SHARE.code, p_uid: UID, p_card_id: Number(id), p_yes: !!yes })
+    .then(function(res){
+      if (res && res.status === 'approved') toast('通过！这张进卡池了');
+      else if (res && res.status === 'rejected') toast('没通过，这张就不留了');
+      else toast('已记一票');
+      return pullCards();
+    })
+    .then(function(){ render(); })
+    .catch(function(e){
+      remote.err = String(e.message || e);
+      toast(e.message || '投票没成功');
+      render();
+    });
+}
+
+/* ---------------------------------------------------------------
+   12. 事件总线
+   --------------------------------------------------------------- */
+$('#app').addEventListener('click', function(e){
+  var t = e.target.closest('[data-act]');
+  if (!t) return;
+  var act = t.dataset.act;
+
+  if (act === 'go'){
+    if (t.dataset.dept){ deptView = t.dataset.dept; setTab('dept'); return; }
+    if (t.dataset.sub)  studioSub = t.dataset.sub;
+    if (t.dataset.feed) wantFeed = true;
+    setTab(t.dataset.tab);
+    return;
+  }
+  if (act === 'checkin')     { doCheckin(); return; }
+  if (act === 'vote')        { doVote(parseInt(t.dataset.i, 10)); return; }
+  if (act === 'like')        { doLike(t.dataset.k, t.dataset.pid, t.dataset.dept); return; }
+  if (act === 'comment')     { openComments(t.dataset.pid, t.dataset.dept); return; }
+  if (act === 'postNew')     { openCompose(t.dataset.dept); return; }
+  // 先清标记再重画，让"点了有反应"这句话成立；
+  // 若当前页本来就不需要联网（部门列表/撸猫/剪辑室），这里也不会卡住不动
+  if (act === 'retrySync')   { remote.err = null; render(); pullFor(); return; }
+  // 走 setTab 而不是直接 render()，是为了让"进部门就拉一次帖子"这条逻辑
+  // 和别的标签页共用同一个入口，将来加页面不会漏
+  if (act === 'deptOpen')    { deptView = t.dataset.id; setTab('dept'); return; }
+  if (act === 'deptBack')    { deptView = null; render(); window.scrollTo(0,0); return; }
+  if (act === 'changeDept')  { setDept(t.dataset.id); return; }
+  if (act === 'setDept')     { setDept(t.dataset.id); closeSheet(); return; }
+  if (act === 'sub')         { studioSub = t.dataset.sub; render(); return; }
+  if (act === 'memePick')    { meme.photo = t.dataset.id; syncMeme(); return; }
+  if (act === 'memeText')    { meme.text = t.dataset.t; syncMeme(); return; }
+  if (act === 'memePos')     { meme.pos = t.dataset.p; render(); return; }
+  if (act === 'memeApply'){
+    var v = ($('#memeInput').value || '').trim();
+    if (!v){ toast('先写点什么'); return; }
+    meme.text = v; syncMeme(); render(); return;
+  }
+  if (act === 'memeMake')    { makeMeme(); return; }
+  if (act === 'draw')        { drawCard(); return; }
+  if (act === 'drawBatch')   { drawBatch(); return; }
+  if (act === 'cardNew')     { openCardSubmit(); return; }
+  if (act === 'cardVote')    { cardVote(t.dataset.id, t.dataset.yes === '1'); return; }
+  if (act === 'idTap')       { idTap(); return; }
+  if (act === 'rename')      { rename(); return; }
+  if (act === 'reassign')    { reassign(); return; }
+  if (act === 'toggleMotion'){ S.settings.reduceMotion = !S.settings.reduceMotion; save(); render(); return; }
+});
+function setDept(id){
+  var d = DEPT_BY_ID[id];
+  if (!d || !d.open) return;
+  P.dept = id; save(); render(); vibe(10);
+  toast('已调入 ' + d.n);
+}
+sheetEl.addEventListener('click', function(e){
+  if (e.target.closest('[data-close]')) closeSheet();
+});
+
+/* ---------------------------------------------------------------
+   13. 启动
+   --------------------------------------------------------------- */
+// 跨天清理：戳猫的每日次数上限按天重置
+if (P.pokesDate !== today()){ P.pokesDate = today(); P.pokesToday = 0; }
+// fresh 是"新抽到、还没看过"的标记，正常由"打开图鉴"清空，这里只是兜底上限
+if (S.album.fresh.length > 3) S.album.fresh = S.album.fresh.slice(-3);
+// 职级完全由好感度推导，启动时对齐一次；否则导入的存档会出现
+// "好感度 0 分、职级却是副校长"这种自相矛盾的工牌
+recalcLevel();
+save();
+
+/* 回到前台就刷新一次。
+   手机上最常见的动作是"锁屏 / 切走 → 再打开"，而这是个长驻的页面：
+   不刷新的话，用户看到的是进页面那一刻的快照，会以为"同事都没发新东西"。
+   切走时反过来 —— 把还没发出去的那次同步立刻发掉。 */
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'visible') pullFor();
+  else flushPush();
+});
+
+runOnboard();
+
+})();
+</script>
+</body>
+</html>
