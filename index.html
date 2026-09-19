@@ -2191,6 +2191,9 @@ function viewCat(){
 
 function mountCat(){
   var stage = $('#catStage'), img = $('#catImg');
+  // 兜底：清掉上一次没清理干净的拖拽残影。
+  // 正常流程不会剩，但只要剩一个，它就会一直叠在屏幕上（实拍 bug 就是这么一屏叠了五个）
+  $$('.ghost-feed').forEach(function(g){ g.remove(); });
   var affBar = $('#affBar');
   var hint = $('#catHint'), holdRing = $('#holdRing'), holdArc = $('#holdArc');
   var sayEl = $('#catSay'), lineEl = $('#catLine'), zone = $('#dropZone');
@@ -2350,14 +2353,38 @@ function mountCat(){
     swapPhoto(pick(['t12','t13','t05']));
   }
 
-  /* --- 拖拽投喂 --- */
+  /* --- 拖拽投喂 ---
+     监听挂在**按钮自己**身上，并用 setPointerCapture 把后续指针事件抓到这个按钮：
+     · 手指滑出按钮、滑到猫身上，事件都还在，不会丢
+     · 松手/被系统取消，事件也一定回到这里
+     之前挂在 document 上、且没处理「指针被取消」——手机上一旦接电话/边缘滑动/浏览器手势，
+     松手事件就永远不会来，残影留在屏幕上越积越多，下一次拖拽的状态也会被顶掉（实拍 bug）。 */
   var drag = null, ghost = null;
+
+  // 收尾：不管拖成没拖成，残影和状态都要清干净
+  function endDrag(cancelled){
+    if (drag && drag.btn) drag.btn.classList.remove('dragging');
+    if (ghost){ ghost.remove(); ghost = null; }
+    zone.classList.remove('near');
+    if (cancelled && lineEl) lineEl.textContent = '投喂中断 · 未扣除';
+    drag = null;
+  }
+
   $$('.feed-btn').forEach(function(btn){
     btn.addEventListener('pointerdown', function(e){
       e.preventDefault();
       var f = FEEDS.filter(function(x){ return x.id === btn.dataset.feed; })[0];
       if (!f) return;
-      if (P.coins < f.cost){ toast('鱼干不够，差 ' + (f.cost - P.coins) + ' 条'); return; }
+      // 按下时就拦：免费额度用没用完、鱼干够不够，当场说清楚，别让人拖到一半才失败
+      var td = today();
+      if (P.feedDate !== td){ P.feedDate = td; P.feedToday = 0; }
+      var isFree = P.feedToday < FEED_FREE_DAILY;
+      if (!isFree && P.coins < f.cost){
+        sfx('deny');
+        toast('今天免费次数用完了，投一次要 ' + f.cost + ' 鱼干，你的不够');
+        if (lineEl) lineEl.textContent = '今天免费次数用完了，投一次要 ' + f.cost + ' 鱼干，你的不够';
+        return;
+      }
       btn.classList.add('dragging');
       ghost = document.createElement('div');
       ghost.className = 'ghost-feed';
@@ -2365,67 +2392,54 @@ function mountCat(){
       ghost.style.left = e.clientX + 'px';
       ghost.style.top = e.clientY + 'px';
       document.body.appendChild(ghost);
-      drag = {f:f, btn:btn};
+      drag = { f: f, btn: btn, free: isFree };
+      try { btn.setPointerCapture(e.pointerId); } catch (err){}
       if (hint) hint.classList.add('gone');
     });
+    btn.addEventListener('pointermove', onDragMove);
+    btn.addEventListener('pointerup', onDragEnd);
+    btn.addEventListener('pointercancel', function(){ endDrag(true); });
   });
-  document.addEventListener('pointermove', onDragMove);
-  document.addEventListener('pointerup', onDragEnd);
 
   function onDragMove(e){
     if (!drag || !ghost) return;
-    e.preventDefault();
     ghost.style.left = e.clientX + 'px';
     ghost.style.top = e.clientY + 'px';
     var r = stage.getBoundingClientRect();
     var cx = r.left + r.width/2, cy = r.top + r.height * 0.38;
-    var dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-    zone.classList.toggle('near', dist < 118);
+    zone.classList.toggle('near', Math.hypot(e.clientX - cx, e.clientY - cy) < 118);
   }
   function onDragEnd(e){
     if (!drag || !ghost) return;
     var r = stage.getBoundingClientRect();
     var cx = r.left + r.width/2, cy = r.top + r.height * 0.38;
     var dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-    var f = drag.f;
-    drag.btn.classList.remove('dragging');
-    ghost.remove(); ghost = null;
-    zone.classList.remove('near');
-    document.removeEventListener('pointermove', onDragMove);
-    document.removeEventListener('pointerup', onDragEnd);
-    drag = null;
+    var f = drag.f, isFree = drag.free;
+    endDrag(false);
 
-    if (dist < 118){
-      // 每天前 20 次免费；之后按食物价格花鱼干（站内货币，不是真钱）
-      var td = today();
-      if (P.feedDate !== td){ P.feedDate = td; P.feedToday = 0; }
-      var isFree = P.feedToday < FEED_FREE_DAILY;
-      if (!isFree){
-        if (!spendCoin(f.cost)){
-          sfx('deny');
-          if (lineEl) lineEl.textContent = '今天免费次数用完了，投一次要 ' + f.cost + ' 鱼干，你的不够';
-          return;
-        }
-        sfx('pay');
-      }
-      P.feedToday++;
-      S.feedings.push({ t: Date.now(), item: f.n, free: isFree });
-      bumped(2);
-      save();
-      vibe([12,30,12]);
-      sfx('feed');
-      fx(f.ic, cx - r.left - 13, cy - r.top - 10);
-      var s = pick(f.say);
-      say(s);
-      comboFeed(cx - r.left, cy - r.top - 30);
-      paintFeedNote();
-      if (lineEl) lineEl.textContent = f.n + ' 投喂成功' + (isFree ? '（今日免费，剩 ' + (FEED_FREE_DAILY - P.feedToday) + ' 次）' : ' · −' + f.cost + ' 鱼干');
-      swapPhoto(pick(['t16','t13','t12','t07']));
-    } else {
+    if (dist >= 118){
       sfx('deny');
       toast('它没接住，东西掉地上了');
       if (lineEl) lineEl.textContent = '投喂失败 · 未扣除';
+      return;
     }
+    if (!isFree && !spendCoin(f.cost)){ sfx('deny'); return; }  // 理论到不了：按下时已拦过一次
+    var td = today();
+    if (P.feedDate !== td){ P.feedDate = td; P.feedToday = 0; }
+    P.feedToday++;
+    S.feedings.push({ t: Date.now(), item: f.n, free: isFree });
+    bumped(2);
+    save();
+    vibe([12,30,12]);
+    sfx('feed');
+    if (!isFree) sfx('pay');
+    fx(f.ic, cx - r.left - 13, cy - r.top - 10);
+    var s = pick(f.say);
+    say(s);
+    comboFeed(cx - r.left, cy - r.top - 30);
+    paintFeedNote();
+    if (lineEl) lineEl.textContent = f.n + ' 投喂成功' + (isFree ? '（今日免费，剩 ' + (FEED_FREE_DAILY - P.feedToday) + ' 次）' : ' · −' + f.cost + ' 鱼干');
+    swapPhoto(pick(['t16','t13','t12','t07']));
   }
 
   /* --- 连击投喂：短时间连续投喂会累加连击数，触发更强的反馈（抖音礼物那套的手感，但去掉付费） --- */
