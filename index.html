@@ -169,6 +169,10 @@ button.sync-note{
 button.sync-note:active{transform:scale(.985)}
 /* 失败原因用更小更淡的字挂在下面：它是给能读懂的人看的，不该抢主句的注意力 */
 button.sync-note .why{display:block;margin-top:3px;font-size:10.5px;font-weight:600;opacity:.78;word-break:break-all}
+/* 微信里的提示：不是错误、也不能点重试（重试也不会通），所以是一段说明，不是按钮 */
+div.sync-note.wx{display:block;width:100%;text-align:left;margin:11px 0 0;padding:11px 13px;
+  border-radius:10px;font-size:12px;line-height:1.6;font-family:inherit;
+  background:#EEF1E9;border:1px solid #D8DED0;color:#4E5647;font-weight:700;cursor:default}
 /* 部门页的发帖入口。固定在内容之上而不是塞进某张卡里，避免和「申请调岗」抢视线 */
 .post-new{margin-bottom:13px}
 .post-empty{padding:22px 16px;text-align:center}
@@ -1185,6 +1189,14 @@ var SHARED = API !== null;
 // 备用地址只切一次。不做"来回反复试"——试过还是不行就老实退回单机
 var switchedToFallback = false;
 
+/* 微信内打开的识别。
+   托管平台会把微信的 UA 整个拦掉（实测：同一个地址，普通浏览器 200，微信 UA 403 拦截页，
+   连 /rest/v1 接口一起拦）—— 所以在微信里共享功能必然连不上，
+   这不是网络抖动，重试一万次也不会通。
+   界面本身走 GitHub Pages（GitHub 不拦微信），所以策略是：
+   本机功能照常玩，共享功能明确指路"去浏览器打开"，而不是挂一条永远重试不成功的横幅。 */
+var IN_WECHAT = /MicroMessenger/i.test(navigator.userAgent);
+
 // 每台设备一个固定标识，作为「我是谁」。
 // 不能用 crypto.randomUUID —— 它要求安全上下文，而局域网走的是 http，拿不到。
 var UID = (function(){
@@ -1494,8 +1506,14 @@ function likedOf(p, deptId){
 // "Failed to fetch"（根本连不上）要查的方向完全不同，只写"失败"等于没说。
 function syncNote(){
   if (!SHARED || !remote.err) return '';
+  var msg = String(remote.err);
+  // 微信里被平台拦是常态（403），重试没有意义 —— 指路比挂横幅有用
+  if (IN_WECHAT && msg.indexOf('403') >= 0){
+    return '<div class="sync-note wx">微信里连不上共享数据，本机功能照常玩'
+      + '<span class="why">要投票 / 发帖 / 排行榜：点右上角「···」→ 在浏览器打开</span></div>';
+  }
   return '<button class="sync-note" data-act="retrySync">⚠️ 连不上共享服务 · 点这里重试'
-    + '<span class="why">' + esc(String(remote.err).slice(0, 80)) + '</span></button>';
+    + '<span class="why">' + esc(msg.slice(0, 80)) + '</span></button>';
 }
 
 // 哪个页面要拉哪些数据，只在这一处声明。
