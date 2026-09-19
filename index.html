@@ -442,6 +442,26 @@ input.txt:focus,textarea.txt:focus{border-color:var(--moss)}
 /* 投稿与审核 */
 .draft{display:block;width:100%;max-height:210px;object-fit:contain;border-radius:12px;
   background:#EFEDE7;margin-bottom:13px}
+.draft.sm{max-height:120px}
+/* 图鉴筛选条 */
+.filters{margin:2px 0 12px}
+.f-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.f-lab{font-size:11.5px;font-weight:800;color:var(--ink3);flex:0 0 40px}
+.f-chip{font-size:12px;font-weight:700;padding:5px 11px;border-radius:20px;border:1px solid var(--line);
+  background:#fff;color:var(--ink2);font-family:inherit}
+.f-chip.on{background:var(--moss);border-color:var(--moss);color:#fff}
+/* 卡片详情 */
+.meta-row{display:flex;gap:8px;align-items:center}
+.rk-badge{font-size:11px;font-weight:900;padding:3px 9px;border-radius:6px;background:rgba(14,14,14,.72);color:#D8D3C8;letter-spacing:.5px}
+.rk-badge.ssr{background:#B5452F;color:#fff}
+.rk-badge.sr{background:#C98A2E;color:#fff}
+.rk-badge.r{background:#5A6152;color:#fff}
+.rk-badge.n{background:#A8A29E;color:#fff}
+.cat-badge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:6px;background:var(--moss-l);color:var(--moss)}
+.up.big{font-size:11px;font-weight:800;color:var(--moss);margin-left:8px;background:var(--moss-l);
+  border-radius:20px;padding:2px 9px;vertical-align:4px}
+/* 表单标签 */
+.lbl{display:block;font-size:11.5px;font-weight:800;color:var(--ink3);margin:12px 0 5px}
 .pend{display:flex;gap:12px;align-items:flex-start}
 .pend img{width:84px;height:84px;flex:0 0 84px;border-radius:11px;object-fit:cover;background:#EFEDE7}
 .pend-b{flex:1;min-width:0}
@@ -745,17 +765,32 @@ var BATCH_N = 10;
 // 抽到重复返还三分之一
 var DUP_REFUND = Math.floor(DRAW_COST / 3);
 
+/* ---- 投稿的自定义项：别锁死，让用户自己定 ---- */
+// 姿态分类（face/sit/lie/sleep/room 和本地 17 张的 cat 字段是同一套，方便图鉴里一起筛）
+var PHOTO_CATS = { face:'正脸', sit:'坐', lie:'躺', sleep:'睡', room:'环境' };
+var CAT_ORDER = ['face', 'sit', 'lie', 'sleep', 'room'];
+// 投稿可选稀有度。SSR 不开放 —— 它是官方原片里那张正脸大特写的专属，
+// 人人可选的话，稀缺感就没了，抽卡权重也跟着乱。
+var CARD_RARITY_OPTIONS = ['N', 'R', 'SR'];
+var CARD_RARITY_DEFAULT = 'R';
+
 // 社区投稿的卡 id 长这样：c12。本地 17 张是 t01~t17。
 // 为什么要能认出来：normalizeState 会拿这份名单过滤存档，
 // 不认 c 开头的 id 的话，用户重开一次页面，他抽到的社区卡就全被当成脏数据删掉了。
 function isCardId(id){ return !!PHOTO_BY_ID[id] || /^c\d+$/.test(String(id || '')); }
 
 // 社区投稿 → 页面认识的卡片形状。
-// 稀有度统一给 R：这是同事拍的日常照，不是从 17 张原创里选出来的"作品"，
-// 把它塞进 SR/SSR 会让原本稀缺的那几张掉价。
+// 稀有度/姿态/描述都用投稿人自己定的值；没填的才回退到默认，
+// 不再是"一律给 R、一律 face"的写死。
 function cardToPhoto(c){
-  return { id: 'c' + c.id, r: 'R', n: c.name, d: '由 ' + (c.author || '同事') + ' 投稿 · 大家投票通过',
-           cat: 'face', img: c.img, community: true };
+  return {
+    id: 'c' + c.id,
+    r: (CARD_RARITY_OPTIONS.indexOf(c.r) >= 0) ? c.r : CARD_RARITY_DEFAULT,
+    n: c.name,
+    d: (c.desc && String(c.desc).trim()) ? String(c.desc).trim() : ('由 ' + (c.author || '同事') + ' 投稿 · 大家投票通过'),
+    cat: (c.cat && PHOTO_CATS[c.cat]) ? c.cat : 'face',
+    img: c.img, community: true, raw: c
+  };
 }
 // 一张卡的图片地址：本地 17 张走 assets，社区卡走后端给的 img 字段
 function imgOf(p){ return p && p.img ? p.img : ('assets/' + p.id + '.jpg'); }
@@ -1400,8 +1435,8 @@ function pullCounts(){
 function pullCards(){
   if (!SHARED) return Promise.resolve([]);
   return Promise.all([
-    sel('jzca_cards', 'status=eq.approved&select=id,uid,author,name,img&order=created_at.desc&limit=200'),
-    sel('jzca_cards', 'status=eq.pending&select=id,uid,author,name,img,yes,no&order=created_at.asc&limit=100')
+    sel('jzca_cards', 'status=eq.approved&select=id,uid,author,name,desc,cat,r,img&order=created_at.desc&limit=200'),
+    sel('jzca_cards', 'status=eq.pending&select=id,uid,author,name,desc,cat,r,img,yes,no&order=created_at.asc&limit=100')
   ]).then(function(res){
     // img 是后端给的图片地址，可能相对可能绝对 —— 统一成能直接塞进 <img src> 的
     remote.cards = (res[0] || []).map(function(c){ c.img = absUrl(c.img); return c; });
@@ -2594,12 +2629,21 @@ function makeMeme(){
 
 /* 网格 HTML 抽成独立函数，是因为"抽完一张只重画网格"需要它：
    整页 render 会把下面那个"抽到了"的结果卡一起冲掉，用户就看不到自己抽到什么了。 */
+/* 图鉴筛选：稀有度 + 姿态，让"数据库"能翻、能查，而不是一长串平铺 */
+var albumFilter = { r: 'all', cat: 'all' };
+function albumFilteredPool(){
+  return cardPool().filter(function(p){
+    if (albumFilter.r !== 'all' && p.r !== albumFilter.r) return false;
+    if (albumFilter.cat !== 'all' && p.cat !== albumFilter.cat) return false;
+    return true;
+  });
+}
 function albumGridHTML(){
   var h = '';
-  cardPool().forEach(function(p){
+  albumFilteredPool().forEach(function(p){
     var has = S.album.unlocked.indexOf(p.id) >= 0;
     var isNew = S.album.fresh.indexOf(p.id) >= 0;
-    h += '<div class="alb' + (has ? '' : ' lock') + (isNew ? ' new' : '') + '">';
+    h += '<div class="alb' + (has ? '' : ' lock') + (isNew ? ' new' : '') + '" data-act="cardOpen" data-id="' + esc(p.id) + '">';
     h +=   '<img src="' + esc(imgOf(p)) + '" alt="" loading="lazy">';
     h +=   '<span class="rk ' + p.r.toLowerCase() + '">' + p.r + '</span>';
     if (p.community) h += '<span class="up">投稿</span>';
@@ -2673,6 +2717,85 @@ function viewPending(){
   return h;
 }
 
+/* ---- 图鉴筛选 + 卡片详情 + 编辑投稿 ---- */
+function albumFilterHTML(){
+  var h = '<div class="filters" id="albFilters">';
+  h += '<div class="f-row"><span class="f-lab">稀有度</span>';
+  ['all', 'SSR', 'SR', 'R', 'N'].forEach(function(r){
+    h += '<button class="f-chip' + (albumFilter.r === r ? ' on' : '') + '" data-act="albumFilter" data-k="r" data-v="' + r + '">' + (r === 'all' ? '全部' : r) + '</button>';
+  });
+  h += '</div>';
+  h += '<div class="f-row"><span class="f-lab">姿态</span>';
+  ['all'].concat(CAT_ORDER).forEach(function(c){
+    h += '<button class="f-chip' + (albumFilter.cat === c ? ' on' : '') + '" data-act="albumFilter" data-k="cat" data-v="' + c + '">' + (c === 'all' ? '全部' : PHOTO_CATS[c]) + '</button>';
+  });
+  h += '</div></div>';
+  return h;
+}
+function applyAlbumFilter(k, v){
+  albumFilter[k] = v;
+  var el = $('#albFilters'); if (el) el.innerHTML = albumFilterHTML();
+  paintAlbum();
+}
+
+function openCardDetail(id){
+  var p = cardPool().filter(function(x){ return x.id === id; })[0];
+  if (!p) return;
+  var has = S.album.unlocked.indexOf(id) >= 0;
+  var canEdit = !!(SHARED && p.community && p.raw && p.raw.uid === UID);
+  openSheet(
+    '<div class="sheet-title">' + esc(p.n)
+      + (p.community ? '<span class="up big">投稿</span>' : '') + '</div>'
+    + '<img class="draft" src="' + esc(imgOf(p)) + '" alt="">'
+    + '<div class="meta-row">'
+    +   '<span class="rk-badge ' + p.r.toLowerCase() + '">' + p.r + '</span>'
+    +   '<span class="cat-badge">' + (PHOTO_CATS[p.cat] || '') + '</span>'
+    + '</div>'
+    + '<div class="tiny" style="margin-top:8px">' + esc(p.d || '') + '</div>'
+    + '<div class="tiny" style="margin-top:8px;color:var(--ink3)">'
+    + (p.community ? ('由 ' + esc((p.raw && p.raw.author) || '同事') + ' 投稿') : '官方原片')
+    + (has ? ' · 已收集' : ' · 未收集') + '</div>'
+    + (canEdit ? '<button class="btn" id="cardEditBtn" style="margin-top:14px">编辑这张卡</button>' : '')
+  );
+  var b = $('#cardEditBtn');
+  if (b) b.addEventListener('click', function(){ closeSheet(); openCardEdit(p); });
+}
+function openCardEdit(p){
+  openSheet(
+    '<div class="sheet-title">编辑投稿</div>'
+    + '<img class="draft sm" src="' + esc(imgOf(p)) + '" alt="">'
+    + '<label class="lbl">名字（12 字内）</label>'
+    + '<input class="txt" id="ceName" maxlength="12" value="' + esc(p.n) + '">'
+    + '<label class="lbl">一句话描述（60 字内）</label>'
+    + '<input class="txt" id="ceDesc" maxlength="60" value="' + esc(p.d || '') + '">'
+    + '<label class="lbl">姿态</label>'
+    + '<select class="txt" id="ceCat">'
+    + CAT_ORDER.map(function(c){ return '<option value="' + c + '"' + (p.cat === c ? ' selected' : '') + '>' + PHOTO_CATS[c] + '</option>'; }).join('')
+    + '</select>'
+    + '<div style="height:12px"></div>'
+    + '<button class="btn" id="ceSave">保存</button>'
+  );
+  var s = $('#ceSave');
+  if (s) s.addEventListener('click', function(){ sendCardEdit(p.id); });
+}
+function sendCardEdit(id){
+  var n = String(($('#ceName') || {}).value || '').trim();
+  var d = String(($('#ceDesc') || {}).value || '').trim();
+  var c = String(($('#ceCat') || {}).value || 'face');
+  if (!n){ toast('名字不能为空'); return; }
+  if (n.length > 12){ toast('名字最多 12 个字'); return; }
+  if (d.length > 60){ toast('描述最多 60 字'); return; }
+  var btn = $('#ceSave');
+  if (btn){ btn.disabled = true; btn.textContent = '保存中…'; }
+  rpc('jzca_card_edit', { p_code: SHARE.code, p_uid: UID, p_card_id: Number(id), p_name: n, p_desc: d, p_cat: c })
+    .then(function(){ closeSheet(); return pullCards(); })
+    .then(function(){ render(); toast('改好了'); })
+    .catch(function(e){
+      if (btn){ btn.disabled = false; btn.textContent = '保存'; }
+      toast('没改成：' + (e.message || e));
+    });
+}
+
 function viewAlbum(){
   var pool = cardPool();
   var h = '';
@@ -2698,6 +2821,7 @@ function viewAlbum(){
   h += viewCardSubmit();
   h += viewPending();
   h += '<div class="sec-t"><span>图鉴</span></div>';
+  h += albumFilterHTML();
   h += '<div class="alb-grid" id="albGrid">' + albumGridHTML() + '</div>';
   h += '<div class="tiny" style="margin-top:14px;text-align:center">解锁方式：签到（连续 7 天送 1 张）· 抽卡（'
      + DRAW_COST + ' 鱼干 1 张）</div>';
@@ -3080,9 +3204,20 @@ function readCardFile(file){
       cardDraft = { data: url.split(',')[1], preview: url };
       openSheet(
         '<div class="sheet-title">投稿一张猫片</div>'
-        + '<div class="sheet-sub">传上去先进入「待大家验证」，不是马上进卡池。</div>'
+        + '<div class="sheet-sub">传上去先进入「待大家验证」，不是马上进卡池。名字、描述、姿态、稀有度都由你定。</div>'
         + '<img class="draft" src="' + esc(url) + '" alt="">'
-        + '<input class="txt" id="cardName" maxlength="12" placeholder="给它起个名字，12 字以内">'
+        + '<label class="lbl">名字（12 字内）</label>'
+        + '<input class="txt" id="cardName" maxlength="12" placeholder="给它起个名字">'
+        + '<label class="lbl">一句话描述（60 字内，可选）</label>'
+        + '<input class="txt" id="cardDesc" maxlength="60" placeholder="比如：它今天霸占了整张办公桌">'
+        + '<label class="lbl">姿态</label>'
+        + '<select class="txt" id="cardCat">'
+        + CAT_ORDER.map(function(c){ return '<option value="' + c + '"' + (c === 'face' ? ' selected' : '') + '>' + PHOTO_CATS[c] + '</option>'; }).join('')
+        + '</select>'
+        + '<label class="lbl">稀有度（决定抽卡权重，SSR 不开放）</label>'
+        + '<select class="txt" id="cardR">'
+        + CARD_RARITY_OPTIONS.map(function(r){ return '<option value="' + r + '"' + (r === CARD_RARITY_DEFAULT ? ' selected' : '') + '>' + r + '</option>'; }).join('')
+        + '</select>'
         + '<div style="height:12px"></div>'
         + '<button class="btn" id="cardSend">提交，等大家投票</button>'
         + '<div class="tiny" style="margin-top:11px">只收猫的照片。出现真人、跟画室无关的东西，'
@@ -3104,11 +3239,17 @@ function sendCardSubmit(){
   var name = el ? String(el.value || '').trim() : '';
   if (!name){ toast('给它起个名字'); return; }
   if (name.length > 12){ toast('名字最多 12 个字'); return; }
+  var desc = String(($('#cardDesc') || {}).value || '').trim();
+  if (desc.length > 60){ toast('描述最多 60 字'); return; }
+  var cat = String(($('#cardCat') || {}).value || 'face');
+  var r = String(($('#cardR') || {}).value || CARD_RARITY_DEFAULT);
+  if (CARD_RARITY_OPTIONS.indexOf(r) < 0) r = CARD_RARITY_DEFAULT;
   var btn = $('#cardSend');
   if (btn){ btn.disabled = true; btn.textContent = '上传中…'; }
   rpc('jzca_card_submit', {
     p_code: SHARE.code, p_uid: UID, p_author: displayName(),
-    p_name: name, p_mime: 'image/jpeg', p_data: cardDraft.data
+    p_name: name, p_mime: 'image/jpeg', p_data: cardDraft.data,
+    p_desc: desc, p_cat: cat, p_r: r
   })
     .then(function(){
       cardDraft = null;
@@ -3184,6 +3325,8 @@ $('#app').addEventListener('click', function(e){
   if (act === 'drawBatch')   { drawBatch(); return; }
   if (act === 'cardNew')     { openCardSubmit(); return; }
   if (act === 'cardVote')    { cardVote(t.dataset.id, t.dataset.yes === '1'); return; }
+  if (act === 'cardOpen')    { openCardDetail(t.dataset.id); return; }
+  if (act === 'albumFilter') { applyAlbumFilter(t.dataset.k, t.dataset.v); return; }
   if (act === 'idTap')       { idTap(); return; }
   if (act === 'rename')      { rename(); return; }
   if (act === 'reassign')    { reassign(); return; }
